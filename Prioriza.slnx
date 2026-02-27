@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="Prioriza.Tests/Prioriza.Tests.csproj" />
   <Project Path="Prioriza.Web/Prioriza.Web.csproj" />
 </Solution>
