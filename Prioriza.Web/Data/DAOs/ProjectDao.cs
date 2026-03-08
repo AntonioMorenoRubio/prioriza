@@ -8,7 +8,7 @@ public class ProjectDao(ApplicationDbContext context) : IProjectDao
     public async Task<IEnumerable<Project>> GetAllByUserAsync(string userId)
     {
         return await context.Projects
-            .Where(p => p.UserId == userId)
+            .Where(p => p.UserId == userId && !p.IsInbox)
             .Include(p => p.Tasks)
             .ToListAsync();
     }
