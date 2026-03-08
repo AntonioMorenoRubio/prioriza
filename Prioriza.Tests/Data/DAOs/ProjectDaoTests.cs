@@ -23,10 +23,10 @@ public class ProjectDaoTests
         // Arrange
         await using var context = CreateContext();
         context.Projects.AddRange(
-            new Project { Id = 1, Name = "Proyecto A", UserId = "user-1", Tasks = new List<WorkItem>() },
-            new Project { Id = 2, Name = "Proyecto B", UserId = "user-1", Tasks = new List<WorkItem>() },
+            new Project { Id = 1, Name = "Proyecto A", UserId = "user-1" },
+            new Project { Id = 2, Name = "Proyecto B", UserId = "user-1" },
             //Diff. User, shouldn't include
-            new Project { Id = 3, Name = "Proyecto C", UserId = "user-2", Tasks = new List<WorkItem>() }
+            new Project { Id = 3, Name = "Proyecto C", UserId = "user-2" }
         );
         await context.SaveChangesAsync();
         IProjectDao dao = new ProjectDao(context);
@@ -44,7 +44,7 @@ public class ProjectDaoTests
     {
         // Arrange
         await using var context = CreateContext();
-        var project = new Project { Id = 1, Name = "Con tareas", UserId = "user-1", Tasks = new List<WorkItem>() };
+        var project = new Project { Id = 1, Name = "Con tareas", UserId = "user-1" };
         context.Projects.Add(project);
         context.WorkItems.AddRange(
             new WorkItem { Id = 1, Title = "Tarea 1", UserId = "user-1", ProjectId = 1 },
@@ -65,7 +65,7 @@ public class ProjectDaoTests
     {
         // Arrange
         await using var context = CreateContext();
-        context.Projects.Add(new Project { Id = 1, Name = "Test", UserId = "user-1", Tasks = new List<WorkItem>() });
+        context.Projects.Add(new Project { Id = 1, Name = "Test", UserId = "user-1" });
         await context.SaveChangesAsync();
         var dao = new ProjectDao(context);
 
@@ -94,7 +94,7 @@ public class ProjectDaoTests
         await using (var context = CreateContext())
         {
             await new ProjectDao(context).CreateAsync(
-                new Project { Name = "Nuevo", UserId = "user-1", Tasks = new List<WorkItem>() });
+                new Project { Name = "Nuevo", UserId = "user-1" });
         }
 
         await using (var context = CreateContext())
@@ -110,7 +110,7 @@ public class ProjectDaoTests
         await using (var context = CreateContext())
         {
             context.Projects.Add(new Project
-                { Id = 1, Name = "Original", UserId = "user-1", Tasks = new List<WorkItem>() });
+                { Id = 1, Name = "Original", UserId = "user-1" });
             await context.SaveChangesAsync();
         }
 
@@ -124,7 +124,7 @@ public class ProjectDaoTests
         await using (var context = CreateContext())
         {
             var updated = await context.Projects.FindAsync(1);
-            Assert.Equal("Actualizado", updated!.Name); // ✅ contexto limpio
+            Assert.Equal("Actualizado", updated!.Name);
         }
     }
 
@@ -134,7 +134,7 @@ public class ProjectDaoTests
         await using (var context = CreateContext())
         {
             context.Projects.Add(new Project
-                { Id = 1, Name = "A borrar", UserId = "user-1", Tasks = new List<WorkItem>() });
+                { Id = 1, Name = "A borrar", UserId = "user-1" });
             await context.SaveChangesAsync();
         }
 

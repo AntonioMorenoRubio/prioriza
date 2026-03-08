@@ -12,5 +12,5 @@ public class Project
     [MaxLength(200)] public string Description { get; set; } = String.Empty;
     [MaxLength(450)] public required string UserId { get; set; }
     public ApplicationUser User { get; set; } = null!;
-    public required ICollection<WorkItem> Tasks { get; set; } = new List<WorkItem>();
+    public ICollection<WorkItem> Tasks { get; set; } = new List<WorkItem>();
 }
