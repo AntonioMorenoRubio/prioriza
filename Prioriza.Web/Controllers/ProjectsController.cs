@@ -6,6 +6,10 @@ using Prioriza.Web.Data.Entities;
 
 namespace Prioriza.Web.Controllers;
 
+/// <summary>
+/// Gestiona las operaciones CRUD sobre los proyectos del usuario autenticado.
+/// Todas las acciones requieren autenticación mediante [Authorize].
+/// </summary>
 [Authorize]
 public class ProjectsController : Controller
 {
@@ -18,6 +22,11 @@ public class ProjectsController : Controller
         _userManager = userManager;
     }
 
+    /// <summary>
+    /// Obtiene un proyecto verificando que pertenece al usuario autenticado.
+    /// Devuelve null si el proyecto no existe o pertenece a otro usuario.
+    /// Centraliza la comprobación de propiedad para evitar repetición en cada acción.
+    /// </summary>
     private async Task<Project?> GetOwnedProjectAsync(int id)
     {
         var project = await _projectDao.GetByIdAsync(id);
@@ -26,7 +35,11 @@ public class ProjectsController : Controller
         return project;
     }
 
-    // GET /Projects
+    /// <summary>
+    /// GET /Projects
+    /// Muestra el listado de proyectos del usuario autenticado.
+    /// Punto de entrada del dashboard principal.
+    /// </summary>
     public async Task<IActionResult> Index()
     {
         var userId = _userManager.GetUserId(User)!;
@@ -34,7 +47,11 @@ public class ProjectsController : Controller
         return View(projects);
     }
 
-    // GET /Projects/Details/5
+    /// <summary>
+    /// GET /Projects/Details/5
+    /// Muestra el detalle de un proyecto con todas sus tareas.
+    /// Devuelve 404 si el proyecto no existe o pertenece a otro usuario.
+    /// </summary>
     public async Task<IActionResult> Details(int id)
     {
         var project = await GetOwnedProjectAsync(id);
@@ -44,10 +61,17 @@ public class ProjectsController : Controller
         return View(project);
     }
 
-    // GET /Projects/Create
+    /// <summary>
+    /// GET /Projects/Create
+    /// Muestra el formulario de creación de un nuevo proyecto.
+    /// </summary>
     public IActionResult Create() => View();
 
-    // POST /Projects/Create
+    /// <summary>
+    /// POST /Projects/Create
+    /// Persiste un nuevo proyecto asignándolo al usuario autenticado.
+    /// IsInbox se fuerza a false para que nunca se cree un segundo Inbox por accidente.
+    /// </summary>
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(Project project)
     {
@@ -60,7 +84,11 @@ public class ProjectsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    // GET /Projects/Edit/5
+    /// <summary>
+    /// GET /Projects/Edit/5
+    /// Muestra el formulario de edición de un proyecto existente.
+    /// Devuelve 404 si el proyecto no existe o pertenece a otro usuario.
+    /// </summary>
     public async Task<IActionResult> Edit(int id)
     {
         var project = await GetOwnedProjectAsync(id);
@@ -70,7 +98,12 @@ public class ProjectsController : Controller
         return View(project);
     }
 
-    // POST /Projects/Edit/5
+    /// <summary>
+    /// POST /Projects/Edit/5
+    /// Actualiza los datos de un proyecto existente.
+    /// UserId e IsInbox se preservan del registro original para evitar
+    /// que se manipulen desde el formulario.
+    /// </summary>
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, Project project)
     {
@@ -90,7 +123,11 @@ public class ProjectsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    // GET /Projects/Delete/5
+    /// <summary>
+    /// GET /Projects/Delete/5
+    /// Muestra la pantalla de confirmación antes de eliminar un proyecto.
+    /// Devuelve 404 si el proyecto no existe o pertenece a otro usuario.
+    /// </summary>
     public async Task<IActionResult> Delete(int id)
     {
         var project = await GetOwnedProjectAsync(id);
@@ -100,7 +137,11 @@ public class ProjectsController : Controller
         return View(project);
     }
 
-    // POST /Projects/Delete/5
+    /// <summary>
+    /// POST /Projects/Delete/5
+    /// Elimina el proyecto tras la confirmación del usuario.
+    /// Las tareas asociadas se eliminan en cascada por configuración de la BD.
+    /// </summary>
     [HttpPost, ActionName("Delete"), ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {

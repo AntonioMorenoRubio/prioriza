@@ -6,6 +6,11 @@ using Prioriza.Web.Data.Entities;
 
 namespace Prioriza.Web.Controllers;
 
+/// <summary>
+/// Gestiona las operaciones CRUD sobre las tareas (WorkItems).
+/// Las tareas no tienen vistas propias: todas las acciones son POST
+/// y redirigen de vuelta a la página de detalle del proyecto.
+/// </summary>
 [Authorize]
 public class WorkItemsController : Controller
 {
@@ -23,6 +28,10 @@ public class WorkItemsController : Controller
         _userManager = userManager;
     }
     
+    /// <summary>
+    /// Obtiene un proyecto verificando que pertenece al usuario autenticado.
+    /// Devuelve null si el proyecto no existe o pertenece a otro usuario.
+    /// </summary>
     private async Task<Project?> GetOwnedProjectAsync(int projectId)
     {
         var project = await _projectDao.GetByIdAsync(projectId);
@@ -31,6 +40,13 @@ public class WorkItemsController : Controller
         return project;
     }
 
+    /// <summary>
+    /// Obtiene una tarea verificando que pertenece al usuario autenticado.
+    /// La propiedad se verifica a través del proyecto, ya que WorkItem
+    /// no tiene FK directa al usuario.
+    /// Devuelve null si la tarea o su proyecto no existen, o si el proyecto
+    /// pertenece a otro usuario.
+    /// </summary>
     private async Task<WorkItem?> GetOwnedWorkItemAsync(int id)
     {
         var workItem = await _workItemDao.GetByIdAsync(id);
@@ -44,7 +60,12 @@ public class WorkItemsController : Controller
         return workItem;
     }
 
-    // POST /WorkItems/Create
+    /// <summary>
+    /// POST /WorkItems/Create
+    /// Crea una nueva tarea dentro de un proyecto del usuario.
+    /// El ProjectId se asigna desde la ruta, no desde el formulario,
+    /// para evitar que se manipule desde el cliente.
+    /// </summary>
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(int projectId, WorkItem workItem)
     {
@@ -59,7 +80,12 @@ public class WorkItemsController : Controller
         return RedirectToAction("Details", "Projects", new { id = projectId });
     }
 
-    // POST /WorkItems/Edit
+    /// <summary>
+    /// POST /WorkItems/Edit
+    /// Actualiza los datos de una tarea existente.
+    /// Verifica que tanto el proyecto como la tarea pertenecen al usuario.
+    /// El ProjectId se preserva del registro original.
+    /// </summary>
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int projectId, WorkItem workItem)
     {
@@ -78,7 +104,11 @@ public class WorkItemsController : Controller
         return RedirectToAction("Details", "Projects", new { id = projectId });
     }
 
-    // POST /WorkItems/ToggleCompleted
+    /// <summary>
+    /// POST /WorkItems/ToggleCompleted
+    /// Invierte el estado de completado de una tarea.
+    /// Usado desde la lista de tareas del proyecto sin necesidad de abrir un formulario.
+    /// </summary>
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> ToggleCompleted(int id, int projectId)
     {
@@ -89,7 +119,10 @@ public class WorkItemsController : Controller
         return RedirectToAction("Details", "Projects", new { id = projectId });
     }
 
-    // POST /WorkItems/Delete
+    /// <summary>
+    /// POST /WorkItems/Delete
+    /// Elimina una tarea tras verificar que pertenece al usuario autenticado.
+    /// </summary>
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(int id, int projectId)
     {
