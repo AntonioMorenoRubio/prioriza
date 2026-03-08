@@ -16,9 +16,9 @@ public class WorkItem
 
     public bool IsCompleted { get; set; } = false;
 
-    public int? ProjectId { get; set; }
+    public int ProjectId { get; set; }
 
-    public Project? Project { get; set; }
+    public Project Project { get; set; } = null!;
 
     public required string UserId { get; set; }
 
