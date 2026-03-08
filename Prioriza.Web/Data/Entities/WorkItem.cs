@@ -19,8 +19,4 @@ public class WorkItem
     public int ProjectId { get; set; }
 
     public Project Project { get; set; } = null!;
-
-    public required string UserId { get; set; }
-
-    public ApplicationUser User { get; set; } = null!;
 }

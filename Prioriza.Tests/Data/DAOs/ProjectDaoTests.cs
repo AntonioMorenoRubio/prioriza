@@ -47,8 +47,8 @@ public class ProjectDaoTests
         var project = new Project { Id = 1, Name = "Con tareas", UserId = "user-1" };
         context.Projects.Add(project);
         context.WorkItems.AddRange(
-            new WorkItem { Id = 1, Title = "Tarea 1", UserId = "user-1", ProjectId = 1 },
-            new WorkItem { Id = 2, Title = "Tarea 2", UserId = "user-1", ProjectId = 1 }
+            new WorkItem { Id = 1, Title = "Tarea 1", ProjectId = 1 },
+            new WorkItem { Id = 2, Title = "Tarea 2", ProjectId = 1 }
         );
         await context.SaveChangesAsync();
         var dao = new ProjectDao(context);
