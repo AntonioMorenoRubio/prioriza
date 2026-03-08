@@ -6,6 +6,7 @@ public interface IProjectDao
 {
     Task<IEnumerable<Project>> GetAllByUserAsync(string userId);
     Task<Project?> GetByIdAsync(int id);
+    Task<Project?> GetInboxByUserAsync(string userId);
     Task<Project> CreateAsync(Project project);
     Task<Project> UpdateAsync(Project project);
     Task DeleteAsync(int id);

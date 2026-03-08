@@ -19,6 +19,13 @@ public class ProjectDao(ApplicationDbContext context) : IProjectDao
             .Include(p => p.Tasks)
             .FirstOrDefaultAsync(p => p.Id == id);
     }
+    
+    public async Task<Project?> GetInboxByUserAsync(string userId)
+    {
+        return await context.Projects
+            .Include(p => p.Tasks)
+            .FirstOrDefaultAsync(p => p.UserId == userId && p.IsInbox);
+    }
 
     public async Task<Project> CreateAsync(Project project)
     {
