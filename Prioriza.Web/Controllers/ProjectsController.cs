@@ -47,6 +47,7 @@ public class ProjectsController : Controller
             return View(project);
 
         project.UserId = _userManager.GetUserId(User)!;
+        project.IsInbox = false;
         await _projectDao.CreateAsync(project);
         return RedirectToAction(nameof(Index));
     }
@@ -71,11 +72,12 @@ public class ProjectsController : Controller
         if (!ModelState.IsValid)
             return View(project);
 
-        var existing = await _projectDao.GetByIdAsync(id);
-        if (existing is null || existing.UserId != _userManager.GetUserId(User))
+        var existing = await GetOwnedProjectAsync(id);
+        if (existing is null)
             return NotFound();
 
         project.UserId = existing.UserId;
+        project.IsInbox = existing.IsInbox;
         await _projectDao.UpdateAsync(project);
         return RedirectToAction(nameof(Index));
     }
@@ -83,8 +85,8 @@ public class ProjectsController : Controller
     // GET /Projects/Delete/5
     public async Task<IActionResult> Delete(int id)
     {
-        var project = await _projectDao.GetByIdAsync(id);
-        if (project is null || project.UserId != _userManager.GetUserId(User))
+        var project = await GetOwnedProjectAsync(id);
+        if (project is null)
             return NotFound();
 
         return View(project);
@@ -94,8 +96,8 @@ public class ProjectsController : Controller
     [HttpPost, ActionName("Delete"), ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
-        var project = await _projectDao.GetByIdAsync(id);
-        if (project is null || project.UserId != _userManager.GetUserId(User))
+        var project = await GetOwnedProjectAsync(id);
+        if (project is null)
             return NotFound();
 
         await _projectDao.DeleteAsync(id);
