@@ -18,6 +18,14 @@ public class ProjectsController : Controller
         _userManager = userManager;
     }
 
+    private async Task<Project?> GetOwnedProjectAsync(int id)
+    {
+        var project = await _projectDao.GetByIdAsync(id);
+        if (project is null || project.UserId != _userManager.GetUserId(User))
+            return null;
+        return project;
+    }
+
     // GET /Projects
     public async Task<IActionResult> Index()
     {
@@ -29,8 +37,8 @@ public class ProjectsController : Controller
     // GET /Projects/Details/5
     public async Task<IActionResult> Details(int id)
     {
-        var project = await _projectDao.GetByIdAsync(id);
-        if (project is null || project.UserId != _userManager.GetUserId(User))
+        var project = await GetOwnedProjectAsync(id);
+        if (project is null)
             return NotFound();
 
         return View(project);
@@ -55,8 +63,8 @@ public class ProjectsController : Controller
     // GET /Projects/Edit/5
     public async Task<IActionResult> Edit(int id)
     {
-        var project = await _projectDao.GetByIdAsync(id);
-        if (project is null || project.UserId != _userManager.GetUserId(User))
+        var project = await GetOwnedProjectAsync(id);
+        if (project is null)
             return NotFound();
 
         return View(project);
