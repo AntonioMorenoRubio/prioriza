@@ -132,10 +132,13 @@ public class ProjectsController : Controller
         if (existing is null)
             return NotFound();
 
-        project.UserId = existing.UserId;
-        project.IsInbox = existing.IsInbox;
-        await _projectDao.UpdateAsync(project);
-        return RedirectToAction(nameof(Index));
+        if (!ModelState.IsValid)
+            return RedirectToAction(nameof(Details), new { id });
+
+        existing.Name = project.Name;
+        existing.Description = project.Description;
+        await _projectDao.UpdateAsync(existing);
+        return RedirectToAction(nameof(Details), new { id });
     }
 
     /// <summary>
