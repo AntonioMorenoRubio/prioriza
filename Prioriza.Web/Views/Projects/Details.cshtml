@@ -1,0 +1,317 @@
+﻿@model Prioriza.Web.Data.Entities.Project
+
+@{
+    ViewBag.Title = Model.Name;
+    Layout = "_Layout";
+    
+    var pendientes = Model.Tasks.Where(t => !t.IsCompleted).ToList();
+    var completadas = Model.Tasks.Where(t => t.IsCompleted).ToList();
+}
+
+<!-- Cabecera -->
+<div class="d-flex justify-content-between align-items-start mb-2">
+    <div>
+        <a asp-controller="Projects" asp-action="Index"
+           class="text-muted small text-decoration-none">
+            ← Volver a proyectos
+        </a>
+        <h1 class="h3 mt-1 mb-0">@Model.Name</h1>
+        @if (!string.IsNullOrEmpty(Model.Description))
+        {
+            <p class="text-muted mt-1 mb-0">@Model.Description</p>
+        }
+    </div>
+    @if (!Model.IsInbox)
+    {
+        <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-outline-secondary"
+                    data-bs-toggle="modal" data-bs-target="#modalEditarProyecto">
+                Editar
+            </button>
+            <button class="btn btn-sm btn-outline-danger"
+                    data-bs-toggle="modal" data-bs-target="#modalBorrarProyecto">
+                Eliminar
+            </button>
+        </div>
+    }
+</div>
+
+<!-- Barra de progreso -->
+<div class="my-4">
+    <div class="d-flex justify-content-between small text-muted mb-1">
+        <span>
+            @Model.TareasPendientes
+            tarea@(Model.TareasPendientes != 1 ? "s" : "") pendiente@(Model.TareasPendientes != 1 ? "s" : "")
+        </span>
+        <span>@Model.Progreso%</span>
+    </div>
+    <div class="progress" style="height: 8px;">
+        <div class="progress-bar" role="progressbar"
+             style="width: @Model.Progreso%"
+             aria-valuenow="@Model.Progreso"
+             aria-valuemin="0" aria-valuemax="100">
+        </div>
+    </div>
+</div>
+
+<!-- Cabecera de tareas -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h5 mb-0">Tareas</h2>
+    <button class="btn btn-primary btn-sm"
+            data-bs-toggle="modal" data-bs-target="#modalCrearTarea">
+        + Nueva tarea
+    </button>
+</div>
+
+<!-- Sin tareas -->
+@if (!Model.Tasks.Any())
+{
+    <p class="text-muted text-center py-4">
+        No hay tareas en este proyecto todavía.
+    </p>
+}
+else
+{
+    <!-- Tareas pendientes -->
+    @if (pendientes.Any())
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3 mb-4">
+            @foreach (var task in pendientes)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm workitem-card"
+                         role="button"
+                         data-bs-toggle="modal"
+                         data-bs-target="#modalTarea-@task.Id">
+                        <div class="card-body d-flex align-items-center gap-2">
+                            <span class="text-muted fs-5">☐</span>
+                            <span>@task.Title</span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <!-- Tareas completadas (colapsables) -->
+    @if (completadas.Any())
+    {
+        <div class="mb-3">
+            <button class="btn btn-sm btn-link text-muted p-0 text-decoration-none"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#completadas">
+                ▸ Completadas (@completadas.Count)
+            </button>
+            <div class="collapse mt-2" id="completadas">
+                <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">
+                    @foreach (var task in completadas)
+                    {
+                        <div class="col">
+                            <div class="card h-100 shadow-sm workitem-card opacity-75"
+                                 role="button"
+                                 data-bs-toggle="modal"
+                                 data-bs-target="#modalTarea-@task.Id">
+                                <div class="card-body d-flex align-items-center gap-2">
+                                    <span class="text-success fs-5">☑</span>
+                                    <span class="text-decoration-line-through text-muted">
+                                        @task.Title
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+}
+
+<!-- ── Modal de cada tarea ──────────────────────────────────────────────── -->
+@foreach (var task in Model.Tasks)
+{
+    <div class="modal fade" id="modalTarea-@task.Id" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@task.Title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-3">
+                        <span class="badge @(task.IsCompleted ? "bg-success" : "bg-warning text-dark")">
+                            @(task.IsCompleted ? "Completada" : "Pendiente")
+                        </span>
+                    </p>
+
+                    @if (!string.IsNullOrEmpty(task.Description))
+                    {
+                        <p class="mb-3">@task.Description</p>
+                    }
+                    else
+                    {
+                        <p class="text-muted fst-italic mb-3">Sin descripción.</p>
+                    }
+
+                    <hr />
+
+                    <!-- Formulario de edición -->
+                    <form asp-controller="WorkItems" asp-action="Edit" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="projectId" value="@Model.Id" />
+                        <input type="hidden" name="Id" value="@task.Id" />
+                        <div class="mb-3">
+                            <label class="form-label">Título</label>
+                            <input name="Title" class="form-control"
+                                   value="@task.Title" required maxlength="200" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Descripción</label>
+                            <textarea name="Description"
+                                      class="form-control" rows="3">@task.Description</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-sm btn-primary">
+                            Guardar cambios
+                        </button>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <!-- Toggle completada -->
+                    <form asp-controller="WorkItems" asp-action="ToggleCompleted" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@task.Id" />
+                        <input type="hidden" name="projectId" value="@Model.Id" />
+                        <button type="submit"
+                                class="btn btn-sm @(task.IsCompleted ? "btn-outline-secondary" : "btn-success")">
+                            @(task.IsCompleted ? "Marcar pendiente" : "Marcar completada")
+                        </button>
+                    </form>
+
+                    <!-- Botón que abre modal de confirmación de borrado -->
+                    <button class="btn btn-sm btn-outline-danger"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modalBorrarTarea-@task.Id"
+                            data-bs-dismiss="modal">
+                        Eliminar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal confirmación borrado de tarea -->
+    <div class="modal fade" id="modalBorrarTarea-@task.Id" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">¿Eliminar tarea?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Seguro que quieres eliminar <strong>@task.Title</strong>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm"
+                            data-bs-dismiss="modal">Cancelar</button>
+                    <form asp-controller="WorkItems" asp-action="Delete" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@task.Id" />
+                        <input type="hidden" name="projectId" value="@Model.Id" />
+                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Modal: Crear tarea -->
+<div class="modal fade" id="modalCrearTarea" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-controller="WorkItems" asp-action="Create"
+                  asp-route-projectId="@Model.Id" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title">Nueva tarea</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Título <span class="text-danger">*</span></label>
+                        <input name="Title" class="form-control" required maxlength="200" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Descripción</label>
+                        <textarea name="Description" class="form-control" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                            data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Crear tarea</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Editar proyecto -->
+@if (!Model.IsInbox)
+{
+    <div class="modal fade" id="modalEditarProyecto" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form asp-controller="Projects" asp-action="Edit"
+                      asp-route-id="@Model.Id" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="Id" value="@Model.Id" />
+                    <div class="modal-header">
+                        <h5 class="modal-title">Editar proyecto</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Nombre <span class="text-danger">*</span></label>
+                            <input name="Name" class="form-control"
+                                   value="@Model.Name" required maxlength="100" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Descripción</label>
+                            <textarea name="Description"
+                                      class="form-control" rows="3">@Model.Description</textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary"
+                                data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Confirmar borrado de proyecto -->
+    <div class="modal fade" id="modalBorrarProyecto" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">¿Eliminar proyecto?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Seguro que quieres eliminar <strong>@Model.Name</strong> y todas sus tareas?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm"
+                            data-bs-dismiss="modal">Cancelar</button>
+                    <form asp-controller="Projects" asp-action="Delete"
+                          asp-route-id="@Model.Id" method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
