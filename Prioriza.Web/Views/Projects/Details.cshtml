@@ -98,6 +98,17 @@ else
                                     @task.Priority
                                 </span>
                             }
+                            @if (task.DueDate.HasValue)
+                            {
+                                var vencida = task.DueDate.Value < DateOnly.FromDateTime(DateTime.Today);
+                                <span class="badge mt-1 @(vencida ? "bg-danger" :
+                                                        task.IsUrgent ? "bg-warning text-dark" :
+                                                        task.IsOneWeekToDueDate ? "bg-info text-dark" :
+                                                        "bg-light text-dark border")"
+                                      style="width: fit-content;">
+                                    @(vencida ? "⚠️ " : "📅 ")@task.DueDate.Value.ToString("dd/MM/yyyy")
+                                </span>
+                            }
                         </div>
                     </div>
                 </div>
@@ -136,6 +147,17 @@ else
                                                                         _ => "bg-secondary"
                                                                     })" style="width: fit-content;">
                                                 @task.Priority
+                                            </span>
+                                        }
+                                        @if (task.DueDate.HasValue)
+                                        {
+                                            var vencida = task.DueDate.Value < DateOnly.FromDateTime(DateTime.Today);
+                                            <span class="badge mt-1 @(vencida ? "bg-danger" :
+                                                                    task.IsUrgent ? "bg-warning text-dark" :
+                                                                    task.IsOneWeekToDueDate ? "bg-info text-dark" :
+                                                                    "bg-light text-dark border")"
+                                                  style="width: fit-content;">
+                                                @(vencida ? "⚠️ " : "📅 ")@task.DueDate.Value.ToString("dd/MM/yyyy")
                                             </span>
                                         }
                                     </span>
