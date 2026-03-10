@@ -50,17 +50,24 @@ public class ProjectsControllerTests
     [Fact]
     public async Task Index_ReturnsViewWithProjectsOfCurrentUser()
     {
+        var inbox = new Project { Id = 0, Name = "Inbox", UserId = "user-1", IsInbox = true };
         var projects = new List<Project>
         {
             new() { Id = 1, Name = "P1", UserId = "user-1" },
             new() { Id = 2, Name = "P2", UserId = "user-1" }
         };
+
+        _daoMock.Setup(d => d.GetInboxByUserAsync("user-1")).ReturnsAsync(inbox);
         _daoMock.Setup(d => d.GetAllByUserAsync("user-1")).ReturnsAsync(projects);
 
         var result = await BuildController("user-1").Index();
 
         var view = Assert.IsType<ViewResult>(result);
-        Assert.Equal(projects, view.Model);
+        var model = Assert.IsAssignableFrom<IEnumerable<Project>>(view.Model).ToList();
+
+        Assert.Equal(3, model.Count);
+        Assert.Equal(inbox, model[0]);
+        Assert.Equal(projects, model.Skip(1).ToList());
     }
 
     // ── Details ──────────────────────────────────────────────────────────────
@@ -163,7 +170,7 @@ public class ProjectsControllerTests
     }
 
     [Fact]
-    public async Task Edit_Post_RedirectsToIndex_WhenValid()
+    public async Task Edit_Post_RedirectsToDetails_WhenValid()
     {
         var existing = new Project { Id = 1, Name = "Original", UserId = "user-1" };
         _daoMock.Setup(d => d.GetByIdAsync(1)).ReturnsAsync(existing);
@@ -173,7 +180,7 @@ public class ProjectsControllerTests
             .Edit(1, new Project { Id = 1, Name = "Editado", UserId = "user-1" });
 
         var redirect = Assert.IsType<RedirectToActionResult>(result);
-        Assert.Equal(nameof(ProjectsController.Index), redirect.ActionName);
+        Assert.Equal(nameof(ProjectsController.Details), redirect.ActionName);
     }
 
     [Fact]
