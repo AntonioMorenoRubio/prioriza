@@ -98,6 +98,9 @@ public class WorkItemsController : Controller
         var existing = await GetOwnedWorkItemAsync(workItem.Id);
         if (existing is null)
             return NotFound();
+        
+        ModelState.Remove(nameof(WorkItem.ProjectId));
+        ModelState.Remove(nameof(WorkItem.Project));
 
         if (!ModelState.IsValid)
             return RedirectToAction("Details", "Projects", new { id = projectId });
