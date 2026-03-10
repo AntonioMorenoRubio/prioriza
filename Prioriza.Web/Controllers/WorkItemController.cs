@@ -105,8 +105,10 @@ public class WorkItemsController : Controller
         if (!ModelState.IsValid)
             return RedirectToAction("Details", "Projects", new { id = projectId });
 
-        workItem.ProjectId = projectId;
-        await _workItemDao.UpdateAsync(workItem);
+        existing.ProjectId = projectId;
+        existing.Title = workItem.Title;
+        existing.Description = workItem.Description;
+        await _workItemDao.UpdateAsync(existing);
         return RedirectToAction("Details", "Projects", new { id = projectId });
     }
 
