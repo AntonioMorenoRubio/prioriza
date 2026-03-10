@@ -98,6 +98,17 @@ else
                                     @task.Priority
                                 </span>
                             }
+                            @if (task.DueDate.HasValue)
+                            {
+                                var vencida = task.DueDate.Value < DateOnly.FromDateTime(DateTime.Today);
+                                <span class="badge mt-1 @(vencida ? "bg-danger" :
+                                                        task.IsUrgent ? "bg-warning text-dark" :
+                                                        task.IsOneWeekToDueDate ? "bg-info text-dark" :
+                                                        "bg-light text-dark border")"
+                                      style="width: fit-content;">
+                                    @(vencida ? "⚠️ " : "📅 ")@task.DueDate.Value.ToString("dd/MM/yyyy")
+                                </span>
+                            }
                         </div>
                     </div>
                 </div>
@@ -136,6 +147,17 @@ else
                                                                         _ => "bg-secondary"
                                                                     })" style="width: fit-content;">
                                                 @task.Priority
+                                            </span>
+                                        }
+                                        @if (task.DueDate.HasValue)
+                                        {
+                                            var vencida = task.DueDate.Value < DateOnly.FromDateTime(DateTime.Today);
+                                            <span class="badge mt-1 @(vencida ? "bg-danger" :
+                                                                    task.IsUrgent ? "bg-warning text-dark" :
+                                                                    task.IsOneWeekToDueDate ? "bg-info text-dark" :
+                                                                    "bg-light text-dark border")"
+                                                  style="width: fit-content;">
+                                                @(vencida ? "⚠️ " : "📅 ")@task.DueDate.Value.ToString("dd/MM/yyyy")
                                             </span>
                                         }
                                     </span>
@@ -203,6 +225,19 @@ else
                         </div>
                         <script>
                             document.getElementById('priority-@task.Id').value = '@(task.Priority?.ToString() ?? "")';
+                        </script>
+                        <div class="mb-3">
+                            <label class="form-label">Fecha límite</label>
+                            <input name="DueDate" type="date" class="form-control"
+                                   id="duedate-@task.Id"/>
+                        </div>
+                        <script>
+                            @if (task.DueDate.HasValue)
+                            {
+                                <text>
+                                    document.getElementById('duedate-@task.Id').value = '@task.DueDate.Value.ToString("yyyy-MM-dd")';
+                                </text>
+                            }
                         </script>
                         <button type="submit" class="btn btn-sm btn-primary">
                             Guardar cambios
@@ -287,6 +322,10 @@ else
                             <option value="Media">Media</option>
                             <option value="Alta">Alta</option>
                         </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Fecha límite</label>
+                        <input name="DueDate" type="date" class="form-control" />
                     </div>
                 </div>
                 <div class="modal-footer">

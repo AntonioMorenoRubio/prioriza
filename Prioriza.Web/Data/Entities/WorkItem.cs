@@ -20,4 +20,11 @@ public class WorkItem
 
     public Project Project { get; set; } = null!;
     public Priority? Priority { get; set; }
+    public DateOnly? DueDate { get; set; }
+
+    [NotMapped]
+    public bool IsUrgent => DueDate.HasValue && DueDate.Value <= DateOnly.FromDateTime(DateTime.Today.AddDays(2));
+
+    [NotMapped]
+    public bool IsOneWeekToDueDate => DueDate.HasValue && DueDate.Value <= DateOnly.FromDateTime(DateTime.Today.AddDays(7));
 }
