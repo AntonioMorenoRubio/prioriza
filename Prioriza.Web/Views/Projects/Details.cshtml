@@ -226,6 +226,19 @@ else
                         <script>
                             document.getElementById('priority-@task.Id').value = '@(task.Priority?.ToString() ?? "")';
                         </script>
+                        <div class="mb-3">
+                            <label class="form-label">Fecha límite</label>
+                            <input name="DueDate" type="date" class="form-control"
+                                   id="duedate-@task.Id"/>
+                        </div>
+                        <script>
+                            @if (task.DueDate.HasValue)
+                            {
+                                <text>
+                                    document.getElementById('duedate-@task.Id').value = '@task.DueDate.Value.ToString("yyyy-MM-dd")';
+                                </text>
+                            }
+                        </script>
                         <button type="submit" class="btn btn-sm btn-primary">
                             Guardar cambios
                         </button>
