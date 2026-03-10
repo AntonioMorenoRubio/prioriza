@@ -19,4 +19,5 @@ public class WorkItem
     public int ProjectId { get; set; }
 
     public Project Project { get; set; } = null!;
+    public Priority? Priority { get; set; }
 }
