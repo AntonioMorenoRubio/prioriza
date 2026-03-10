@@ -125,8 +125,8 @@ public class ProjectsController : Controller
         if (id != project.Id)
             return BadRequest();
 
-        if (!ModelState.IsValid)
-            return View(project);
+        ModelState.Remove(nameof(Project.UserId));
+        ModelState.Remove(nameof(Project.User));
 
         var existing = await GetOwnedProjectAsync(id);
         if (existing is null)
