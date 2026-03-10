@@ -108,6 +108,7 @@ public class WorkItemsController : Controller
         existing.ProjectId = projectId;
         existing.Title = workItem.Title;
         existing.Description = workItem.Description;
+        existing.Priority = workItem.Priority;
         await _workItemDao.UpdateAsync(existing);
         return RedirectToAction("Details", "Projects", new { id = projectId });
     }
