@@ -55,6 +55,24 @@
     </div>
 </div>
 
+<!-- Buscador de tareas -->
+<div class="d-flex gap-2 mb-3">
+    <input type="search" id="filtroTitulo" class="form-control form-control-sm"
+           placeholder="Buscar tarea..." />
+    <select id="filtroPrioridad" class="form-select form-select-sm" style="width: auto;">
+        <option value="">Toda prioridad</option>
+        <option value="Alta">Alta</option>
+        <option value="Media">Media</option>
+        <option value="Baja">Baja</option>
+        <option value="none">Sin prioridad</option>
+    </select>
+    <select id="filtroEstado" class="form-select form-select-sm" style="width: auto;">
+        <option value="">Todo estado</option>
+        <option value="pendiente">Pendiente</option>
+        <option value="completada">Completada</option>
+    </select>
+</div>
+
 <!-- Cabecera de tareas -->
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="h5 mb-0">Tareas</h2>
@@ -79,7 +97,10 @@ else
         <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3 mb-4">
             @foreach (var task in pendientes)
             {
-                <div class="col">
+                <div class="col task-card"
+                     data-titulo="@task.Title.ToLower()"
+                     data-prioridad="@(task.Priority?.ToString() ?? "none")"
+                     data-estado="pendiente">
                     <div class="card h-100 shadow-sm workitem-card"
                          role="button"
                          data-bs-toggle="modal"
@@ -129,7 +150,10 @@ else
                 <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">
                     @foreach (var task in completadas)
                     {
-                        <div class="col">
+                        <div class="col task-card"
+                             data-titulo="@task.Title.ToLower()"
+                             data-prioridad="@(task.Priority?.ToString() ?? "none")"
+                             data-estado="completada">
                             <div class="card h-100 shadow-sm workitem-card opacity-75"
                                  role="button"
                                  data-bs-toggle="modal"
@@ -397,4 +421,29 @@ else
             </div>
         </div>
     </div>
+}
+
+@section Scripts {
+    <script>
+        const inputs = ['filtroTitulo', 'filtroPrioridad', 'filtroEstado'];
+
+        function aplicarFiltro() {
+            const titulo = document.getElementById('filtroTitulo').value.toLowerCase();
+            const prioridad = document.getElementById('filtroPrioridad').value;
+            const estado = document.getElementById('filtroEstado').value;
+
+            document.querySelectorAll('.task-card').forEach(card => {
+                const coincideTitulo = !titulo || card.dataset.titulo.includes(titulo);
+                const coincidePrioridad = !prioridad || card.dataset.prioridad === prioridad;
+                const coincideEstado = !estado || card.dataset.estado === estado;
+
+                card.style.display = (coincideTitulo && coincidePrioridad && coincideEstado)
+                    ? '' : 'none';
+            });
+        }
+
+        inputs.forEach(id => {
+            document.getElementById(id).addEventListener('input', aplicarFiltro);
+        });
+    </script>
 }

@@ -19,6 +19,12 @@
     </div>
 </div>
 
+<!-- Buscador de proyectos -->
+<div class="mb-4">
+    <input type="search" id="filtroProyecto" class="form-control"
+           placeholder="Buscar proyecto..." />
+</div>
+
 @if (!Model.Any())
 {
     <div class="text-center text-muted py-5">
@@ -34,7 +40,7 @@ else
     <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
         @foreach (var project in Model)
         {
-            <div class="col">
+            <div class="col project-item" data-nombre="@project.Name.ToLower()">
                 <div class="card h-100 shadow-sm project-card @(project.IsInbox ? "border-primary" : "")" 
                      role="button"
                      onclick="window.location='@Url.Action("Details", "Projects", new { id = project.Id })'">
@@ -152,3 +158,15 @@ else
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.getElementById('filtroProyecto').addEventListener('input', function () {
+            const texto = this.value.toLowerCase();
+            document.querySelectorAll('.project-item').forEach(item => {
+                item.style.display = !texto || item.dataset.nombre.includes(texto)
+                    ? '' : 'none';
+            });
+        });
+    </script>
+}
