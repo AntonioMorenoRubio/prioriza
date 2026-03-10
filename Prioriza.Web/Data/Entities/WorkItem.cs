@@ -27,4 +27,16 @@ public class WorkItem
 
     [NotMapped]
     public bool IsOneWeekToDueDate => DueDate.HasValue && DueDate.Value <= DateOnly.FromDateTime(DateTime.Today.AddDays(7));
+    /// <summary>
+    /// Quadrants from Eisenhower's Matrix.
+    /// Requires Priority and DueDate derived operations.
+    /// </summary>
+    [NotMapped]
+    public EisenhowerQuadrant EisenhowerQuadrant => (Priority == Entities.Priority.Alta, IsUrgent) switch
+    {
+        (true, true) => EisenhowerQuadrant.DoFirst,
+        (true, false) => EisenhowerQuadrant.Schedule,
+        (false, true) => EisenhowerQuadrant.Delegate,
+        (false, false) => EisenhowerQuadrant.Delete
+    };
 }
