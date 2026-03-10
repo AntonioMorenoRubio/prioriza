@@ -55,6 +55,123 @@
     </div>
 </div>
 
+<!-- Matriz de Eisenhower -->
+<ul class="nav nav-tabs mb-3" id="vistaTab">
+    <li class="nav-item">
+        <button class="nav-link active" data-bs-toggle="tab"
+                data-bs-target="#vistaLista">
+            Lista
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link" data-bs-toggle="tab"
+                data-bs-target="#vistaMatriz">
+            Matriz de Eisenhower
+        </button>
+    </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade show active" id="vistaLista">
+        <!-- Aquí va todo el contenido actual: filtro, tarjetas pendientes, completadas -->
+    </div>
+
+    <div class="tab-pane fade" id="vistaMatriz">
+        <div class="row g-3">
+
+            <!-- Cuadrante 1: Importante + Urgente -->
+            <div class="col-md-6">
+                <div class="card border-danger h-100">
+                    <div class="card-header bg-danger text-white fw-bold">
+                        🔥 Hazlo ahora
+                        <small class="fw-normal ms-1">Importante + Urgente</small>
+                    </div>
+                    <div class="card-body p-2">
+                        @foreach (var task in pendientes.Where(t => t.EisenhowerQuadrant == EisenhowerQuadrant.DoFirst))
+                        {
+                            <div class="p-2 mb-1 rounded border workitem-card"
+                                 role="button"
+                                 data-bs-toggle="modal"
+                                 data-bs-target="#modalTarea-@task.Id">
+                                @task.Title
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cuadrante 2: Importante + No urgente -->
+            <div class="col-md-6">
+                <div class="card border-primary h-100">
+                    <div class="card-header bg-primary text-white fw-bold">
+                        📅 Planifícalo
+                        <small class="fw-normal ms-1">Importante + No urgente</small>
+                    </div>
+                    <div class="card-body p-2">
+                        @foreach (var task in pendientes.Where(t => t.EisenhowerQuadrant == EisenhowerQuadrant.Schedule))
+                        {
+                            <div class="p-2 mb-1 rounded border workitem-card"
+                                 role="button"
+                                 data-bs-toggle="modal"
+                                 data-bs-target="#modalTarea-@task.Id">
+                                @task.Title
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cuadrante 3: No importante + Urgente -->
+            <div class="col-md-6">
+                <div class="card border-warning h-100">
+                    <div class="card-header bg-warning text-dark fw-bold">
+                        👥 Delégalo
+                        <small class="fw-normal ms-1">No importante + Urgente</small>
+                    </div>
+                    <div class="card-body p-2">
+                        @foreach (var task in pendientes.Where(t => t.EisenhowerQuadrant == EisenhowerQuadrant.Delegate))
+                        {
+                            <div class="p-2 mb-1 rounded border workitem-card"
+                                 role="button"
+                                 data-bs-toggle="modal"
+                                 data-bs-target="#modalTarea-@task.Id">
+                                @task.Title
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cuadrante 4: No importante + No urgente -->
+            <div class="col-md-6">
+                <div class="card border-secondary h-100">
+                    <div class="card-header bg-secondary text-white fw-bold">
+                        🗑️ Elimínalo
+                        <small class="fw-normal ms-1">No importante + No urgente</small>
+                    </div>
+                    <div class="card-body p-2">
+                        @foreach (var task in pendientes.Where(t => t.EisenhowerQuadrant == EisenhowerQuadrant.Delete))
+                        {
+                            <div class="p-2 mb-1 rounded border workitem-card"
+                                 role="button"
+                                 data-bs-toggle="modal"
+                                 data-bs-target="#modalTarea-@task.Id">
+                                @task.Title
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <p class="text-muted small mt-3">
+            Las tareas sin prioridad Alta y sin fecha límite aparecen en "Elimínalo".
+            Asigna prioridad y fecha para clasificarlas correctamente.
+        </p>
+    </div>
+</div>
+
 <!-- Buscador de tareas -->
 <div class="d-flex gap-2 mb-3">
     <input type="search" id="filtroTitulo" class="form-control form-control-sm"
