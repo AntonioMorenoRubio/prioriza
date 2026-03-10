@@ -43,7 +43,19 @@ public class ProjectsController : Controller
     public async Task<IActionResult> Index()
     {
         var userId = _userManager.GetUserId(User)!;
-        var projects = await _projectDao.GetAllByUserAsync(userId);
+        
+        var inbox = await _projectDao.GetInboxByUserAsync(userId)
+                    ?? await _projectDao.CreateAsync(new Project
+        {
+            Name = "Inbox",
+            UserId = userId,
+            IsInbox = true
+        });
+        
+        ViewBag.InboxId = inbox.Id;
+
+        var projects = new List<Project>() { inbox };
+        projects.AddRange(await _projectDao.GetAllByUserAsync(userId));
         return View(projects);
     }
 
