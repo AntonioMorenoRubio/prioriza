@@ -29,3 +29,14 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+.project-card:hover,
+.workitem-card:hover {
+  transform: translateY(-2px);
+  transition: transform 0.15s ease;
+  cursor: pointer;
+}
+
+.progress-bar {
+  transition: width 0.4s ease;
+}
