@@ -87,6 +87,9 @@ public class ProjectsController : Controller
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(Project project)
     {
+        ModelState.Remove(nameof(Project.UserId));
+        ModelState.Remove(nameof(Project.User));
+        
         if (!ModelState.IsValid)
             return View(project);
 
