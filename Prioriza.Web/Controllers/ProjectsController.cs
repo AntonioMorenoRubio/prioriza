@@ -43,7 +43,19 @@ public class ProjectsController : Controller
     public async Task<IActionResult> Index()
     {
         var userId = _userManager.GetUserId(User)!;
-        var projects = await _projectDao.GetAllByUserAsync(userId);
+        
+        var inbox = await _projectDao.GetInboxByUserAsync(userId)
+                    ?? await _projectDao.CreateAsync(new Project
+        {
+            Name = "Inbox",
+            UserId = userId,
+            IsInbox = true
+        });
+        
+        ViewBag.InboxId = inbox.Id;
+
+        var projects = new List<Project>() { inbox };
+        projects.AddRange(await _projectDao.GetAllByUserAsync(userId));
         return View(projects);
     }
 
@@ -75,6 +87,9 @@ public class ProjectsController : Controller
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(Project project)
     {
+        ModelState.Remove(nameof(Project.UserId));
+        ModelState.Remove(nameof(Project.User));
+        
         if (!ModelState.IsValid)
             return View(project);
 
@@ -110,17 +125,20 @@ public class ProjectsController : Controller
         if (id != project.Id)
             return BadRequest();
 
-        if (!ModelState.IsValid)
-            return View(project);
+        ModelState.Remove(nameof(Project.UserId));
+        ModelState.Remove(nameof(Project.User));
 
         var existing = await GetOwnedProjectAsync(id);
         if (existing is null)
             return NotFound();
 
-        project.UserId = existing.UserId;
-        project.IsInbox = existing.IsInbox;
-        await _projectDao.UpdateAsync(project);
-        return RedirectToAction(nameof(Index));
+        if (!ModelState.IsValid)
+            return RedirectToAction(nameof(Details), new { id });
+
+        existing.Name = project.Name;
+        existing.Description = project.Description;
+        await _projectDao.UpdateAsync(existing);
+        return RedirectToAction(nameof(Details), new { id });
     }
 
     /// <summary>

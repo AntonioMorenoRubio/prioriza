@@ -71,6 +71,9 @@ public class WorkItemsController : Controller
     {
         if (await GetOwnedProjectAsync(projectId) is null)
             return NotFound();
+        
+        ModelState.Remove(nameof(WorkItem.ProjectId));
+        ModelState.Remove(nameof(WorkItem.Project));
 
         if (!ModelState.IsValid)
             return RedirectToAction("Details", "Projects", new { id = projectId });
@@ -95,12 +98,17 @@ public class WorkItemsController : Controller
         var existing = await GetOwnedWorkItemAsync(workItem.Id);
         if (existing is null)
             return NotFound();
+        
+        ModelState.Remove(nameof(WorkItem.ProjectId));
+        ModelState.Remove(nameof(WorkItem.Project));
 
         if (!ModelState.IsValid)
             return RedirectToAction("Details", "Projects", new { id = projectId });
 
-        workItem.ProjectId = projectId;
-        await _workItemDao.UpdateAsync(workItem);
+        existing.ProjectId = projectId;
+        existing.Title = workItem.Title;
+        existing.Description = workItem.Description;
+        await _workItemDao.UpdateAsync(existing);
         return RedirectToAction("Details", "Projects", new { id = projectId });
     }
 

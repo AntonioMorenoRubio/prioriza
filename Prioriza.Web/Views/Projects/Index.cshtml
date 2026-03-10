@@ -1,0 +1,141 @@
+﻿@model IEnumerable<Prioriza.Web.Data.Entities.Project>
+
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = "_Layout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Mis proyectos</h1>
+    <div class="d-flex gap-2">
+        <button class="btn btn-outline-primary"
+                data-bs-toggle="modal" data-bs-target="#modalCrearTarea">
+            + Nueva tarea
+        </button>
+        <button class="btn btn-primary"
+                data-bs-toggle="modal" data-bs-target="#modalCrearProyecto">
+            + Nuevo proyecto
+        </button>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="text-center text-muted py-5">
+        <p class="fs-5">Aún no tienes proyectos.</p>
+        <button class="btn btn-primary"
+                data-bs-toggle="modal" data-bs-target="#modalCrearProyecto">
+            Crear tu primer proyecto
+        </button>
+    </div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+        @foreach (var project in Model)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm project-card @(project.IsInbox ? "border-primary" : "")" 
+                     role="button"
+                     onclick="window.location='@Url.Action("Details", "Projects", new { id = project.Id })'">
+                    <div class="card-body">
+                        <h5 class="card-title">@project.Name</h5>
+                        @if (!string.IsNullOrEmpty(project.Description))
+                        {
+                            <p class="card-text text-muted small">@project.Description</p>
+                        }
+                        <span class="badge bg-secondary mt-1">
+                            @project.TareasPendientes pendiente@(project.TareasPendientes != 1 ? "s" : "")
+                        </span>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <div class="d-flex justify-content-between small text-muted mb-1">
+                            <span>Progreso</span>
+                            <span>@project.Progreso%</span>
+                        </div>
+                        <div class="progress" style="height: 6px;">
+                            <div class="progress-bar" role="progressbar"
+                                 style="width: @project.Progreso%"
+                                 aria-valuenow="@project.Progreso"
+                                 aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<!-- Modal: Crear proyecto -->
+<div class="modal fade" id="modalCrearProyecto" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-controller="Projects" asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title">Nuevo proyecto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nombre <span class="text-danger">*</span></label>
+                        <input name="Name" class="form-control" required maxlength="100"/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Descripción</label>
+                        <textarea name="Description" class="form-control"
+                                  rows="3" maxlength="200"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                            data-bs-dismiss="modal">Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">Crear proyecto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Crear tarea rápida hacia Inbox -->
+<div class="modal fade" id="modalCrearTarea" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-controller="WorkItems" asp-action="Create"
+                  asp-route-projectId="@ViewBag.InboxId" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title">Nueva tarea</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    @if (ViewBag.InboxId == null)
+                    {
+                        <div class="alert alert-warning small">
+                            No se encontró el Inbox. Regístrate de nuevo o contacta soporte.
+                        </div>
+                    }
+                    <div class="mb-3">
+                        <label class="form-label">Título <span class="text-danger">*</span></label>
+                        <input name="Title" class="form-control" required maxlength="200"/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Descripción</label>
+                        <textarea name="Description" class="form-control" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                            data-bs-dismiss="modal">Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary"
+                            @(ViewBag.InboxId == null ? "disabled" : "")>
+                        Crear tarea
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
