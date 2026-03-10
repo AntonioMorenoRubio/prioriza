@@ -97,7 +97,10 @@ else
         <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3 mb-4">
             @foreach (var task in pendientes)
             {
-                <div class="col">
+                <div class="col task-card"
+                     data-titulo="@task.Title.ToLower()"
+                     data-prioridad="@(task.Priority?.ToString() ?? "none")"
+                     data-estado="pendiente">
                     <div class="card h-100 shadow-sm workitem-card"
                          role="button"
                          data-bs-toggle="modal"
@@ -147,7 +150,10 @@ else
                 <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">
                     @foreach (var task in completadas)
                     {
-                        <div class="col">
+                        <div class="col task-card"
+                             data-titulo="@task.Title.ToLower()"
+                             data-prioridad="@(task.Priority?.ToString() ?? "none")"
+                             data-estado="completada">
                             <div class="card h-100 shadow-sm workitem-card opacity-75"
                                  role="button"
                                  data-bs-toggle="modal"
