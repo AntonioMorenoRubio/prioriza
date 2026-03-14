@@ -52,6 +52,11 @@ namespace Prioriza.Web.Areas.Identity.Pages.Account.Manage
         /// </summary>
         public class InputModel
         {
+            [Required]
+            [MaxLength(50)]
+            [Display(Name = "UserName")]
+            public string UserName { get; set; }
+            
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
@@ -66,10 +71,9 @@ namespace Prioriza.Web.Areas.Identity.Pages.Account.Manage
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
 
-            Username = userName;
-
             Input = new InputModel
             {
+                UserName = userName,
                 PhoneNumber = phoneNumber
             };
         }
@@ -100,6 +104,17 @@ namespace Prioriza.Web.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
 
+            var userName = await _userManager.GetUserNameAsync(user);
+            if (Input.UserName != userName)
+            {
+                var setNameResult = await _userManager.SetUserNameAsync(user, Input.UserName);
+                if (!setNameResult.Succeeded)
+                {
+                    StatusMessage = "Unexpected error when trying to set user name.";
+                    return RedirectToPage();
+                }
+            }
+            
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
             if (Input.PhoneNumber != phoneNumber)
             {
