@@ -40,3 +40,21 @@ body {
 .progress-bar {
   transition: width 0.4s ease;
 }
+
+:root {
+  --prioriza-accent: var(--bs-orange);
+}
+
+/* Navbar */
+.navbar-brand {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--prioriza-accent) !important;
+  text-align: center;
+}
+
+.navbar {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
