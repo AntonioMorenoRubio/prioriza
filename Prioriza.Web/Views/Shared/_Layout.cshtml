@@ -20,10 +20,15 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end">
-                <button id="themeToggle" class="btn btn-sm btn-outline-secondary me-2" title="Cambiar tema">
-                    <span id="themeIcon">🌙</span>
-                </button>
-                <partial name="_LoginPartial"/>
+                <div class="d-flex align-items-center gap-1">
+                    <span class="text-warning" aria-hidden="true">☀️</span>
+                    <div class="form-check form-switch mb-0">
+                        <input class="form-check-input" type="checkbox" id="themeToggle"
+                               role="switch" style="cursor: pointer;"
+                               aria-label="Cambiar entre tema claro y oscuro" />
+                    </div>
+                    <span class="text-white" aria-hidden="true">🌙</span>
+                </div>
             </div>
         </div>
     </nav>
@@ -44,17 +49,15 @@
 <script src="~/js/site.js" asp-append-version="true"></script>
 <script>
     const html = document.documentElement;
-    const icon = document.getElementById('themeIcon');
+    const toggle = document.getElementById('themeToggle');
     const saved = localStorage.getItem('theme') ?? 'light';
     html.setAttribute('data-bs-theme', saved);
-    icon.textContent = saved === 'dark' ? '☀️' : '🌙';
+    toggle.checked = saved === 'dark';
 
-    document.getElementById('themeToggle').addEventListener('click', () => {
-        const current = html.getAttribute('data-bs-theme');
-        const next = current === 'dark' ? 'light' : 'dark';
+    toggle.addEventListener('change', () => {
+        const next = toggle.checked ? 'dark' : 'light';
         html.setAttribute('data-bs-theme', next);
         localStorage.setItem('theme', next);
-        icon.textContent = next === 'dark' ? '☀️' : '🌙';
     });
 </script>
 @await RenderSectionAsync("Scripts", required: false)
