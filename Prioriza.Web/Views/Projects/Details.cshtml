@@ -91,8 +91,11 @@
                         {
                             <div class="p-2 mb-1 rounded border workitem-card"
                                  role="button"
+                                 tabindex="0"
                                  data-bs-toggle="modal"
-                                 data-bs-target="#modalTarea-@task.Id">
+                                 data-bs-target="#modalTarea-@task.Id"
+                                 aria-label="Abrir tarea: @task.Title"
+                                 onkeydown="if(event.key==='Enter'||event.key===' ')this.click()">
                                 @task.Title
                             </div>
                         }
@@ -112,8 +115,11 @@
                         {
                             <div class="p-2 mb-1 rounded border workitem-card"
                                  role="button"
+                                 tabindex="0"
                                  data-bs-toggle="modal"
-                                 data-bs-target="#modalTarea-@task.Id">
+                                 data-bs-target="#modalTarea-@task.Id"
+                                 aria-label="Abrir tarea: @task.Title"
+                                 onkeydown="if(event.key==='Enter'||event.key===' ')this.click()">
                                 @task.Title
                             </div>
                         }
@@ -133,8 +139,11 @@
                         {
                             <div class="p-2 mb-1 rounded border workitem-card"
                                  role="button"
+                                 tabindex="0"
                                  data-bs-toggle="modal"
-                                 data-bs-target="#modalTarea-@task.Id">
+                                 data-bs-target="#modalTarea-@task.Id"
+                                 aria-label="Abrir tarea: @task.Title"
+                                 onkeydown="if(event.key==='Enter'||event.key===' ')this.click()">
                                 @task.Title
                             </div>
                         }
@@ -154,8 +163,11 @@
                         {
                             <div class="p-2 mb-1 rounded border workitem-card"
                                  role="button"
+                                 tabindex="0"
                                  data-bs-toggle="modal"
-                                 data-bs-target="#modalTarea-@task.Id">
+                                 data-bs-target="#modalTarea-@task.Id"
+                                 aria-label="Abrir tarea: @task.Title"
+                                 onkeydown="if(event.key==='Enter'||event.key===' ')this.click()">
                                 @task.Title
                             </div>
                         }
@@ -174,20 +186,29 @@
 
 <!-- Buscador de tareas -->
 <div class="d-flex gap-2 mb-3">
-    <input type="search" id="filtroTitulo" class="form-control form-control-sm"
-           placeholder="Buscar tarea..." />
-    <select id="filtroPrioridad" class="form-select form-select-sm" style="width: auto;">
-        <option value="">Toda prioridad</option>
-        <option value="Alta">Alta</option>
-        <option value="Media">Media</option>
-        <option value="Baja">Baja</option>
-        <option value="none">Sin prioridad</option>
-    </select>
-    <select id="filtroEstado" class="form-select form-select-sm" style="width: auto;">
-        <option value="">Todo estado</option>
-        <option value="pendiente">Pendiente</option>
-        <option value="completada">Completada</option>
-    </select>
+    <div class="flex-grow-1">
+        <label for="filtroTitulo" class="visually-hidden">Buscar tarea</label>
+        <input type="search" id="filtroTitulo" class="form-control form-control-sm"
+               placeholder="Buscar tarea..." />
+    </div>
+    <div>
+        <label for="filtroPrioridad" class="visually-hidden">Filtrar por prioridad</label>
+        <select id="filtroPrioridad" class="form-select form-select-sm">
+            <option value="">Toda prioridad</option>
+            <option value="Alta">Alta</option>
+            <option value="Media">Media</option>
+            <option value="Baja">Baja</option>
+            <option value="none">Sin prioridad</option>
+        </select>
+    </div>
+    <div>
+        <label for="filtroEstado" class="visually-hidden">Filtrar por estado</label>
+        <select id="filtroEstado" class="form-select form-select-sm">
+            <option value="">Todo estado</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="completada">Completada</option>
+        </select>
+    </div>
 </div>
 
 <!-- Cabecera de tareas -->
@@ -220,8 +241,11 @@ else
                      data-estado="pendiente">
                     <div class="card h-100 shadow-sm workitem-card"
                          role="button"
+                         tabindex="0"
                          data-bs-toggle="modal"
-                         data-bs-target="#modalTarea-@task.Id">
+                         data-bs-target="#modalTarea-@task.Id"
+                         aria-label="Abrir tarea: @task.Title"
+                         onkeydown="if(event.key==='Enter'||event.key===' ')this.click()">
                         <div class="card-body d-flex align-items-center gap-2">
                             <span class="text-muted fs-5">☐</span>
                             <span>@task.Title</span>
@@ -273,10 +297,13 @@ else
                              data-estado="completada">
                             <div class="card h-100 shadow-sm workitem-card opacity-75"
                                  role="button"
+                                 tabindex="0"
                                  data-bs-toggle="modal"
-                                 data-bs-target="#modalTarea-@task.Id">
+                                 data-bs-target="#modalTarea-@task.Id"
+                                 aria-label="Abrir tarea: @task.Title"
+                                 onkeydown="if(event.key==='Enter'||event.key===' ')this.click()">
                                 <div class="card-body d-flex align-items-center gap-2">
-                                    <span class="text-success fs-5">☑</span>
+                                    <span class="text-success-emphasis" aria-hidden="true">✓</span>
                                     <span class="text-decoration-line-through text-muted">
                                         @task.Title
                                         @if (task.Priority.HasValue)
@@ -315,12 +342,14 @@ else
 <!-- ── Modal de cada tarea ──────────────────────────────────────────────── -->
 @foreach (var task in Model.Tasks)
 {
-    <div class="modal fade" id="modalTarea-@task.Id" tabindex="-1">
+    <div class="modal fade" id="modalTarea-@task.Id" tabindex="-1"
+         aria-labelledby="modalTareaLabel-@task.Id" aria-modal="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">@task.Title</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <h2 class="modal-title h5" id="modalTareaLabel-@task.Id">@task.Title</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
                     <p class="mb-3">
@@ -328,7 +357,6 @@ else
                             @(task.IsCompleted ? "Completada" : "Pendiente")
                         </span>
                     </p>
-
                     @if (!string.IsNullOrEmpty(task.Description))
                     {
                         <p class="mb-3">@task.Description</p>
@@ -337,27 +365,26 @@ else
                     {
                         <p class="text-muted fst-italic mb-3">Sin descripción.</p>
                     }
-
                     <hr />
-
+                    
                     <!-- Formulario de edición -->
                     <form asp-controller="WorkItems" asp-action="Edit" method="post">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="projectId" value="@Model.Id" />
                         <input type="hidden" name="Id" value="@task.Id" />
                         <div class="mb-3">
-                            <label class="form-label">Título</label>
-                            <input name="Title" class="form-control"
+                            <label for="titulo-@task.Id" class="form-label">Título</label>
+                            <input id="titulo-@task.Id" name="Title" class="form-control"
                                    value="@task.Title" required maxlength="200" />
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Descripción</label>
-                            <textarea name="Description"
+                            <label for="descripcion-@task.Id" class="form-label">Descripción</label>
+                            <textarea id="descripcion-@task.Id" name="Description"
                                       class="form-control" rows="3">@task.Description</textarea>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Prioridad</label>
-                            <select name="Priority" class="form-select" id="priority-@task.Id">
+                            <label for="priority-@task.Id" class="form-label">Prioridad</label>
+                            <select id="priority-@task.Id" name="Priority" class="form-select">
                                 <option value="">Sin prioridad</option>
                                 <option value="Baja">Baja</option>
                                 <option value="Media">Media</option>
@@ -368,15 +395,15 @@ else
                             document.getElementById('priority-@task.Id').value = '@(task.Priority?.ToString() ?? "")';
                         </script>
                         <div class="mb-3">
-                            <label class="form-label">Fecha límite</label>
-                            <input name="DueDate" type="date" class="form-control"
-                                   id="duedate-@task.Id"/>
+                            <label for="duedate-@task.Id" class="form-label">Fecha límite</label>
+                            <input id="duedate-@task.Id" name="DueDate" type="date"
+                                   class="form-control" />
                         </div>
                         <script>
                             @if (task.DueDate.HasValue)
                             {
                                 <text>
-                                    document.getElementById('duedate-@task.Id').value = '@task.DueDate.Value.ToString("yyyy-MM-dd")';
+                                document.getElementById('duedate-@task.Id').value = '@task.DueDate.Value.ToString("yyyy-MM-dd")';
                                 </text>
                             }
                         </script>
@@ -389,14 +416,14 @@ else
                     <!-- Toggle completada -->
                     <form asp-controller="WorkItems" asp-action="ToggleCompleted" method="post">
                         @Html.AntiForgeryToken()
-                        <input type="hidden" name="id" value="@task.Id" />
-                        <input type="hidden" name="projectId" value="@Model.Id" />
+                        <input type="hidden" name="id" value="@task.Id"/>
+                        <input type="hidden" name="projectId" value="@Model.Id"/>
                         <button type="submit"
                                 class="btn btn-sm @(task.IsCompleted ? "btn-outline-secondary" : "btn-success")">
                             @(task.IsCompleted ? "Marcar pendiente" : "Marcar completada")
                         </button>
                     </form>
-
+                    
                     <!-- Botón que abre modal de confirmación de borrado -->
                     <button class="btn btn-sm btn-outline-danger"
                             data-bs-toggle="modal"
@@ -410,12 +437,14 @@ else
     </div>
 
     <!-- Modal confirmación borrado de tarea -->
-    <div class="modal fade" id="modalBorrarTarea-@task.Id" tabindex="-1">
+    <div class="modal fade" id="modalBorrarTarea-@task.Id" tabindex="-1"
+         aria-labelledby="modalBorrarTareaLabel-@task.Id" aria-modal="true">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">¿Eliminar tarea?</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <h2 class="modal-title h5" id="modalBorrarTareaLabel-@task.Id">¿Eliminar tarea?</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
                     ¿Seguro que quieres eliminar <strong>@task.Title</strong>?
@@ -436,28 +465,35 @@ else
 }
 
 <!-- Modal: Crear tarea -->
-<div class="modal fade" id="modalCrearTarea" tabindex="-1">
+<div class="modal fade" id="modalCrearTarea" tabindex="-1"
+     aria-labelledby="modalCrearTareaLabel" aria-modal="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <form asp-controller="WorkItems" asp-action="Create"
                   asp-route-projectId="@Model.Id" method="post">
                 @Html.AntiForgeryToken()
                 <div class="modal-header">
-                    <h5 class="modal-title">Nueva tarea</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <h2 class="modal-title h5" id="modalCrearTareaLabel">Nueva tarea</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label">Título <span class="text-danger">*</span></label>
-                        <input name="Title" class="form-control" required maxlength="200" />
+                        <label for="nuevaTareaTitulo" class="form-label">
+                            Título <span class="text-danger-emphasis" aria-hidden="true">*</span>
+                            <span class="visually-hidden">(obligatorio)</span>
+                        </label>
+                        <input id="nuevaTareaTitulo" name="Title" class="form-control"
+                               required maxlength="200" />
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Descripción</label>
-                        <textarea name="Description" class="form-control" rows="3"></textarea>
+                        <label for="nuevaTareaDescripcion" class="form-label">Descripción</label>
+                        <textarea id="nuevaTareaDescripcion" name="Description"
+                                  class="form-control" rows="3"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Prioridad</label>
-                        <select name="Priority" class="form-select">
+                        <label for="nuevaTareaPrioridad" class="form-label">Prioridad</label>
+                        <select id="nuevaTareaPrioridad" name="Priority" class="form-select">
                             <option value="">Sin prioridad</option>
                             <option value="Baja">Baja</option>
                             <option value="Media">Media</option>
@@ -465,8 +501,9 @@ else
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Fecha límite</label>
-                        <input name="DueDate" type="date" class="form-control" />
+                        <label for="nuevaTareaFecha" class="form-label">Fecha límite</label>
+                        <input id="nuevaTareaFecha" name="DueDate" type="date"
+                               class="form-control" />
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -482,7 +519,8 @@ else
 <!-- Modal: Editar proyecto -->
 @if (!Model.IsInbox)
 {
-    <div class="modal fade" id="modalEditarProyecto" tabindex="-1">
+    <div class="modal fade" id="modalEditarProyecto" tabindex="-1"
+         aria-labelledby="modalEditarProyectoLabel" aria-modal="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <form asp-controller="Projects" asp-action="Edit"
@@ -490,18 +528,22 @@ else
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="Id" value="@Model.Id" />
                     <div class="modal-header">
-                        <h5 class="modal-title">Editar proyecto</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <h2 class="modal-title h5" id="modalEditarProyectoLabel">Editar proyecto</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Cerrar"></button>
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label class="form-label">Nombre <span class="text-danger">*</span></label>
-                            <input name="Name" class="form-control"
+                            <label for="editarProyectoNombre" class="form-label">
+                                Nombre <span class="text-danger" aria-hidden="true">*</span>
+                                <span class="visually-hidden">(obligatorio)</span>
+                            </label>
+                            <input id="editarProyectoNombre" name="Name" class="form-control"
                                    value="@Model.Name" required maxlength="100" />
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Descripción</label>
-                            <textarea name="Description"
+                            <label for="editarProyectoDescripcion" class="form-label">Descripción</label>
+                            <textarea id="editarProyectoDescripcion" name="Description"
                                       class="form-control" rows="3">@Model.Description</textarea>
                         </div>
                     </div>
@@ -516,12 +558,14 @@ else
     </div>
 
     <!-- Modal: Confirmar borrado de proyecto -->
-    <div class="modal fade" id="modalBorrarProyecto" tabindex="-1">
+    <div class="modal fade" id="modalBorrarProyecto" tabindex="-1"
+         aria-labelledby="modalBorrarProyectoLabel" aria-modal="true">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">¿Eliminar proyecto?</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <h2 class="modal-title h5" id="modalBorrarProyectoLabel">¿Eliminar proyecto?</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
                     ¿Seguro que quieres eliminar <strong>@Model.Name</strong> y todas sus tareas?
