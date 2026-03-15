@@ -3,16 +3,24 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
-<ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))
 {
-    <li class="nav-item">
-        <a  class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">¡Hola, @User.Identity?.Name!</a>
-    </li>
-    <li class="nav-item">
-        <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Projects", new { area = "" })">
-            <button  type="submit" class="nav-link btn btn-link">Cerrar Sesión</button>
+    <div class="d-flex align-items-center gap-2">
+        <a asp-area="Identity" asp-page="/Account/Manage/Index"
+           class="btn btn-sm btn-outline-light"
+           title="¡Hola, @User.Identity?.Name! — Mi perfil"
+           aria-label="Mi perfil (@User.Identity?.Name)">
+            <i class="bi bi-person-circle" aria-hidden="true"></i>
+        </a>
+        <form asp-area="Identity" asp-page="/Account/Logout"
+              asp-route-returnUrl="@Url.Action("Index", "Projects", new { area = "" })"
+              method="post">
+            <button type="submit"
+                    class="btn btn-sm btn-outline-danger"
+                    title="Cerrar sesión"
+                    aria-label="Cerrar sesión">
+                <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+            </button>
         </form>
-    </li>
+    </div>
 }
-</ul>
