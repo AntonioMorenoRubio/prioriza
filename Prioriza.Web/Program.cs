@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Prioriza.Web.Data;
 using Prioriza.Web.Data.DAOs;
@@ -16,6 +17,8 @@ builder.Services.AddScoped<IProjectDao, ProjectDao>();
 builder.Services.AddScoped<IWorkItemDao, WorkItemDao>();
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddScoped<IEmailSender, NoOpEmailSender>();
+
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
