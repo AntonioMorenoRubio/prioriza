@@ -54,7 +54,7 @@ namespace Prioriza.Web.Areas.Identity.Pages.Account.Manage
         {
             [Required]
             [MaxLength(50)]
-            [Display(Name = "UserName")]
+            [Display(Name = "Nombre de Usuario")]
             public string UserName { get; set; }
             
             /// <summary>
@@ -62,7 +62,7 @@ namespace Prioriza.Web.Areas.Identity.Pages.Account.Manage
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Phone]
-            [Display(Name = "Phone number")]
+            [Display(Name = "Número de Teléfono")]
             public string PhoneNumber { get; set; }
         }
 
