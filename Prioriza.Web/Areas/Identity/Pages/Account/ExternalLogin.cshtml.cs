@@ -84,6 +84,7 @@ namespace Prioriza.Web.Areas.Identity.Pages.Account
             /// </summary>
             [Required]
             [EmailAddress]
+            [Display(Name = "Correo")]
             public string Email { get; set; }
         }
         
@@ -102,13 +103,13 @@ namespace Prioriza.Web.Areas.Identity.Pages.Account
             returnUrl = returnUrl ?? Url.Content("~/");
             if (remoteError != null)
             {
-                ErrorMessage = $"Error from external provider: {remoteError}";
+                ErrorMessage = $"Error del proveedor externo: {remoteError}";
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
-                ErrorMessage = "Error loading external login information.";
+                ErrorMessage = "Error al cargar la información de inicio de sesión externa.";
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
 
@@ -146,7 +147,7 @@ namespace Prioriza.Web.Areas.Identity.Pages.Account
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
-                ErrorMessage = "Error loading external login information during confirmation.";
+                ErrorMessage = "Error al cargar la información de inicio de sesión externa durante la confirmación.";
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
 
@@ -174,9 +175,9 @@ namespace Prioriza.Web.Areas.Identity.Pages.Account
                             values: new { area = "Identity", userId = userId, code = code },
                             protocol: Request.Scheme);
 
-                        await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                            $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
+                        await _emailSender.SendEmailAsync(Input.Email, "Confirma tu email",
+                            $"Confirma tu cuenta <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>haciendo clic aquí</a>.");
+                        
                         // If account confirmation is required, we need to show the link if we don't have a real email sender
                         if (_userManager.Options.SignIn.RequireConfirmedAccount)
                         {
