@@ -360,14 +360,6 @@ else
                             @(task.IsCompleted ? "Completada" : "Pendiente")
                         </span>
                     </p>
-                    @if (!string.IsNullOrEmpty(task.Description))
-                    {
-                        <p class="mb-3">@task.Description</p>
-                    }
-                    else
-                    {
-                        <p class="text-muted fst-italic mb-3">Sin descripción.</p>
-                    }
                     <hr />
                     
                     <!-- Formulario de edición -->
