@@ -10,14 +10,20 @@
 
 <p id="external-login-description" class="text-primary-emphasis">
     Te has autenticado correctamente con <strong>@Model.ProviderDisplayName</strong>.
-    Introduce una dirección de email para este sitio y pulsa Registrarse para completar
-    el inicio de sesión.
+    Introduce un nombre de usuario y una dirección de email para este sitio y pulsa Registrarse para completar el inicio
+    de sesión.
 </p>
 
 <div class="row">
     <div class="col-md-4">
         <form asp-page-handler="Confirmation" asp-route-returnUrl="@Model.ReturnUrl" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.UserName" class="form-control"
+                       placeholder="Introduce tu Nombre de Usuario."/>
+                <label asp-for="Input.UserName" class="form-label"></label>
+                <span asp-validation-for="Input.UserName" class="text-danger"></span>
+            </div>
             <div class="form-floating mb-3">
                 <input asp-for="Input.Email" class="form-control"
                        autocomplete="email" placeholder="Introduce tu email." />
