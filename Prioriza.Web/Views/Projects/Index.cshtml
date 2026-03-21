@@ -53,13 +53,14 @@ else
                                 }
                                 @project.Name
                             </h2>
+                            <span class="badge bg-secondary mt-1">
+                                @project.TareasPendientes pendiente@(project.TareasPendientes != 1 ? "s" : "")
+                            </span>
+                            <br/>
                             @if (!string.IsNullOrEmpty(project.Description))
                             {
                                 <p class="card-text text-muted small">@project.Description</p>
                             }
-                            <span class="badge bg-secondary mt-1">
-                                @project.TareasPendientes pendiente@(project.TareasPendientes != 1 ? "s" : "")
-                            </span>
                         </div>
                         <div class="card-footer bg-transparent">
                             <div class="d-flex justify-content-between small text-muted mb-1">
