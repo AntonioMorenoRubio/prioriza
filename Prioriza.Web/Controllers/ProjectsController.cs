@@ -74,12 +74,6 @@ public class ProjectsController : Controller
     }
 
     /// <summary>
-    /// GET /Projects/Create
-    /// Muestra el formulario de creación de un nuevo proyecto.
-    /// </summary>
-    public IActionResult Create() => View();
-
-    /// <summary>
     /// POST /Projects/Create
     /// Persiste un nuevo proyecto asignándolo al usuario autenticado.
     /// IsInbox se fuerza a false para que nunca se cree un segundo Inbox por accidente.
@@ -91,7 +85,7 @@ public class ProjectsController : Controller
         ModelState.Remove(nameof(Project.User));
         
         if (!ModelState.IsValid)
-            return View(project);
+            return RedirectToAction(nameof(Index));
 
         project.UserId = _userManager.GetUserId(User)!;
         project.IsInbox = false;

@@ -127,7 +127,7 @@ public class ProjectsControllerTests
 
         var result = await controller.Create(new Project { Id = 1, Name = "Test", UserId = "user-1" });
 
-        Assert.IsType<ViewResult>(result);
+        Assert.IsType<RedirectToActionResult>(result);
     }
 
     [Fact]
