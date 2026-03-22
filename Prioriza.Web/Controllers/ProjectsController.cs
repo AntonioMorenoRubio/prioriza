@@ -83,12 +83,14 @@ public class ProjectsController : Controller
     {
         ModelState.Remove(nameof(Project.UserId));
         ModelState.Remove(nameof(Project.User));
+        ModelState.Remove(nameof(Project.Description));
         
         if (!ModelState.IsValid)
             return RedirectToAction(nameof(Index));
 
         project.UserId = _userManager.GetUserId(User)!;
         project.IsInbox = false;
+        project.Description ??= string.Empty;
         await _projectDao.CreateAsync(project);
         return RedirectToAction(nameof(Index));
     }
