@@ -122,20 +122,6 @@ public class ProjectsController : Controller
     }
 
     /// <summary>
-    /// GET /Projects/Delete/5
-    /// Muestra la pantalla de confirmación antes de eliminar un proyecto.
-    /// Devuelve 404 si el proyecto no existe o pertenece a otro usuario.
-    /// </summary>
-    public async Task<IActionResult> Delete(int id)
-    {
-        var project = await GetOwnedProjectAsync(id);
-        if (project is null)
-            return NotFound();
-
-        return View(project);
-    }
-
-    /// <summary>
     /// POST /Projects/Delete/5
     /// Elimina el proyecto tras la confirmación del usuario.
     /// Las tareas asociadas se eliminan en cascada por configuración de la BD.
