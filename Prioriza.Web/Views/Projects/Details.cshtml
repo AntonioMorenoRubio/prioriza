@@ -86,91 +86,9 @@
 <!-- ── Modal de cada tarea ──────────────────────────────────────────────── -->
 @foreach (var task in Model.Tasks)
 {
-    <div class="modal fade" id="modalTarea-@task.Id" tabindex="-1"
-         aria-labelledby="modalTareaLabel-@task.Id" aria-modal="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 class="modal-title h5" id="modalTareaLabel-@task.Id">@task.Title</h2>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                            aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body">
-                    <p class="mb-3">
-                        <span class="badge @(task.IsCompleted ? "bg-success" : "bg-warning text-dark")">
-                            @(task.IsCompleted ? "Completada" : "Pendiente")
-                        </span>
-                    </p>
-                    <hr />
-                    
-                    <!-- Formulario de edición -->
-                    <form asp-controller="WorkItems" asp-action="Edit" method="post">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="projectId" value="@Model.Id" />
-                        <input type="hidden" name="Id" value="@task.Id" />
-                        <div class="mb-3">
-                            <label for="titulo-@task.Id" class="form-label">Título</label>
-                            <input id="titulo-@task.Id" name="Title" class="form-control"
-                                   value="@task.Title" required maxlength="200" />
-                        </div>
-                        <div class="mb-3">
-                            <label for="descripcion-@task.Id" class="form-label">Descripción</label>
-                            <textarea id="descripcion-@task.Id" name="Description"
-                                      class="form-control" rows="3">@task.Description</textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="priority-@task.Id" class="form-label">Prioridad</label>
-                            <select id="priority-@task.Id" name="Priority" class="form-select">
-                                <option value="">Sin prioridad</option>
-                                <option value="Baja">Baja</option>
-                                <option value="Media">Media</option>
-                                <option value="Alta">Alta</option>
-                            </select>
-                        </div>
-                        <script>
-                            document.getElementById('priority-@task.Id').value = '@(task.Priority?.ToString() ?? "")';
-                        </script>
-                        <div class="mb-3">
-                            <label for="duedate-@task.Id" class="form-label">Fecha límite</label>
-                            <input id="duedate-@task.Id" name="DueDate" type="date"
-                                   class="form-control" />
-                        </div>
-                        <script>
-                            @if (task.DueDate.HasValue)
-                            {
-                                <text>
-                                document.getElementById('duedate-@task.Id').value = '@task.DueDate.Value.ToString("yyyy-MM-dd")';
-                                </text>
-                            }
-                        </script>
-                        <button type="submit" class="btn btn-sm btn-primary">
-                            Guardar cambios
-                        </button>
-                    </form>
-                </div>
-                <div class="modal-footer justify-content-between">
-                    <!-- Toggle completada -->
-                    <form asp-controller="WorkItems" asp-action="ToggleCompleted" method="post">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="id" value="@task.Id"/>
-                        <input type="hidden" name="projectId" value="@Model.Id"/>
-                        <button type="submit"
-                                class="btn btn-sm @(task.IsCompleted ? "btn-outline-secondary" : "btn-success")">
-                            @(task.IsCompleted ? "Marcar pendiente" : "Marcar completada")
-                        </button>
-                    </form>
-                    
-                    <!-- Botón que abre modal de confirmación de borrado -->
-                    <button class="btn btn-sm btn-outline-danger"
-                            data-bs-toggle="modal"
-                            data-bs-target="#modalBorrarTarea-@task.Id"
-                            data-bs-dismiss="modal">
-                        Eliminar
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <partial name="~/Views/Projects/_ModalEditWorkItem.cshtml"
+             model="task"
+             view-data='new ViewDataDictionary(ViewData) { { "projectId", Model.Id } }'/>
 
     <!-- Modal confirmación borrado de tarea -->
     <div class="modal fade" id="modalBorrarTarea-@task.Id" tabindex="-1"
