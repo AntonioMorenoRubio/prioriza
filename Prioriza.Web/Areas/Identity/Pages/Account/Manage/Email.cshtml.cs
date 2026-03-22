@@ -123,12 +123,16 @@ namespace Prioriza.Web.Areas.Identity.Pages.Account.Manage
                     pageHandler: null,
                     values: new { area = "Identity", userId = userId, email = Input.NewEmail, code = code },
                     protocol: Request.Scheme);
-                await _emailSender.SendEmailAsync(
-                    Input.NewEmail,
-                    "Confirma tu correo",
-                    $"Por favor, confirma tu cuenta haciendo clic <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>aquí.</a>.");
+                if (callbackUrl != null)
+                {
+                    await _emailSender.SendEmailAsync(
+                        Input.NewEmail,
+                        "Confirma tu correo",
+                        $"Por favor, confirma tu cuenta haciendo clic <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>aquí.</a>.");
 
-                StatusMessage = "Correo de confirmación enviado. Por favor, comprueba tu nuevo correo.";
+                    StatusMessage = "Correo de confirmación enviado. Por favor, comprueba tu nuevo correo.";
+                }
+
                 return RedirectToPage();
             }
 
@@ -159,12 +163,20 @@ namespace Prioriza.Web.Areas.Identity.Pages.Account.Manage
                 pageHandler: null,
                 values: new { area = "Identity", userId = userId, code = code },
                 protocol: Request.Scheme);
-            await _emailSender.SendEmailAsync(
-                email,
-                "Verifica tu correo",
-                $"Por favor, verifica tu cuenta haciendo clic <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>aquí.</a>.");
+            if (email != null && callbackUrl != null)
+            {
+                await _emailSender.SendEmailAsync(
+                    email,
+                    "Verifica tu correo",
+                    $"Por favor, verifica tu cuenta haciendo clic <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>aquí.</a>.");
 
-            StatusMessage = "Correo de verificación enviado. Por favor, comprueba tu nuevo correo.";
+                StatusMessage = "Correo de verificación enviado. Por favor, comprueba tu nuevo correo.";
+            }
+            else
+            {
+                StatusMessage = "El correo de verificación no ha podido ser enviado. Por favor, inténtalo más tarde.";
+            }
+
             return RedirectToPage();
         }
     }
