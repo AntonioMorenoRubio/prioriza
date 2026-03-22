@@ -35,8 +35,9 @@ public class ProjectDaoTests
         var result = await dao.GetAllByUserAsync("user-1");
 
         // Assert
-        Assert.Equal(2, result.Count());
-        Assert.All(result, p => Assert.Equal("user-1", p.UserId));
+        var enumerable = result.ToList();
+        Assert.Equal(2, enumerable.Count());
+        Assert.All(enumerable, p => Assert.Equal("user-1", p.UserId));
     }
 
     [Fact]
