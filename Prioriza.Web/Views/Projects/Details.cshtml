@@ -101,43 +101,7 @@
 <!-- Modal: Editar proyecto -->
 @if (!Model.IsInbox)
 {
-    <div class="modal fade" id="modalEditarProyecto" tabindex="-1"
-         aria-labelledby="modalEditarProyectoLabel" aria-modal="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form asp-controller="Projects" asp-action="Edit"
-                      asp-route-id="@Model.Id" method="post">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="Id" value="@Model.Id" />
-                    <div class="modal-header">
-                        <h2 class="modal-title h5" id="modalEditarProyectoLabel">Editar proyecto</h2>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Cerrar"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="editarProyectoNombre" class="form-label">
-                                Nombre <span class="text-danger" aria-hidden="true">*</span>
-                                <span class="visually-hidden">(obligatorio)</span>
-                            </label>
-                            <input id="editarProyectoNombre" name="Name" class="form-control"
-                                   value="@Model.Name" required maxlength="100" />
-                        </div>
-                        <div class="mb-3">
-                            <label for="editarProyectoDescripcion" class="form-label">Descripción</label>
-                            <textarea id="editarProyectoDescripcion" name="Description"
-                                      class="form-control" rows="3">@Model.Description</textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary"
-                                data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Guardar</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    <partial name="~/Views/Projects/_ModalEditProject.cshtml" model="Model" />
 
     <!-- Modal: Confirmar borrado de proyecto -->
     <div class="modal fade" id="modalBorrarProyecto" tabindex="-1"
