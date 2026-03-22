@@ -83,41 +83,7 @@ else
     </div>
 }
 
-<!-- Modal: Crear proyecto -->
-<div class="modal fade" id="modalCrearProyecto" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form asp-controller="Projects" asp-action="Create" method="post">
-                @Html.AntiForgeryToken()
-                <div class="modal-header">
-                    <h2 class="modal-title h5" id="modalCrearProyectoLabel">Nuevo proyecto</h2>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                            aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="proyectoNombre" class="form-label">
-                            Nombre <span class="text-danger" aria-hidden="true">*</span>
-                            <span class="visually-hidden">(obligatorio)</span>
-                        </label>
-                        <input id="proyectoNombre" name="Name" class="form-control"
-                               required maxlength="100" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="proyectoDescripcion" class="form-label">Descripción</label>
-                        <textarea id="proyectoDescripcion" name="Description"
-                                  class="form-control" rows="3" maxlength="200"></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary"
-                            data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Crear proyecto</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+<partial name="~/Views/Projects/_ModalCreateProject.cshtml" />
 
 <!-- Modal: Crear tarea rápida hacia Inbox -->
 <div class="modal fade" id="modalCrearTarea" tabindex="-1">
