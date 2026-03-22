@@ -1,0 +1,52 @@
+﻿@model Prioriza.Web.Data.Entities.Project
+
+<div class="modal fade" id="modalCrearTarea" tabindex="-1"
+     aria-labelledby="modalCrearTareaLabel" aria-modal="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-controller="WorkItems" asp-action="Create"
+                  asp-route-projectId="@Model.Id" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h2 class="modal-title h5" id="modalCrearTareaLabel">Nueva tarea</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="nuevaTareaTitulo" class="form-label">
+                            Título <span class="text-danger-emphasis" aria-hidden="true">*</span>
+                            <span class="visually-hidden">(obligatorio)</span>
+                        </label>
+                        <input id="nuevaTareaTitulo" name="Title" class="form-control"
+                               required maxlength="200" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="nuevaTareaDescripcion" class="form-label">Descripción</label>
+                        <textarea id="nuevaTareaDescripcion" name="Description"
+                                  class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="nuevaTareaPrioridad" class="form-label">Prioridad</label>
+                        <select id="nuevaTareaPrioridad" name="Priority" class="form-select">
+                            <option value="">Sin prioridad</option>
+                            <option value="Baja">Baja</option>
+                            <option value="Media">Media</option>
+                            <option value="Alta">Alta</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="nuevaTareaFecha" class="form-label">Fecha límite</label>
+                        <input id="nuevaTareaFecha" name="DueDate" type="date"
+                               class="form-control" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                            data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Crear tarea</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
