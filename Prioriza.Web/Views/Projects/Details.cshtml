@@ -89,33 +89,10 @@
     <partial name="~/Views/Projects/_ModalEditWorkItem.cshtml"
              model="task"
              view-data='new ViewDataDictionary(ViewData) { { "projectId", Model.Id } }'/>
-
-    <!-- Modal confirmación borrado de tarea -->
-    <div class="modal fade" id="modalBorrarTarea-@task.Id" tabindex="-1"
-         aria-labelledby="modalBorrarTareaLabel-@task.Id" aria-modal="true">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 class="modal-title h5" id="modalBorrarTareaLabel-@task.Id">¿Eliminar tarea?</h2>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                            aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body">
-                    ¿Seguro que quieres eliminar <strong>@task.Title</strong>?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm"
-                            data-bs-dismiss="modal">Cancelar</button>
-                    <form asp-controller="WorkItems" asp-action="Delete" method="post">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="id" value="@task.Id" />
-                        <input type="hidden" name="projectId" value="@Model.Id" />
-                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+    
+    <partial name="~/Views/Projects/_ModalDeleteWorkItem.cshtml"
+             model="task"
+             view-data='new ViewDataDictionary(ViewData) { { "projectId", Model.Id } }' />
 }
 
 <!-- Modal: Crear tarea -->
