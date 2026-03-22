@@ -52,7 +52,25 @@
                         </button>
                     </form>
                 </section>
-
+                @if ((Model.ExternalLogins?.Count ?? 0) > 0)
+                {
+                    <section aria-label="Iniciar sesión con proveedor externo">
+                        <form id="external-account" asp-page="./ExternalLogin"
+                              asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                            <div class="d-flex flex-column gap-2 mt-3">
+                                @foreach (var provider in Model.ExternalLogins!)
+                                {
+                                    <button type="submit" class="btn btn-dark border-light-subtle d-flex align-items-center justify-content-center gap-2 w-100"
+                                            name="provider" value="@provider.Name"
+                                            title="Iniciar sesión con @provider.DisplayName">
+                                        <i class="bi bi-@(provider.Name.ToLower())" aria-hidden="true"></i>
+                                        <span class="text-white">Continuar con @provider.DisplayName</span>
+                                    </button>
+                                }
+                            </div>
+                        </form>
+                    </section>
+                }
             </div>
         </div>
 
@@ -70,28 +88,6 @@
                 </li>
             </ul>
         </nav>
-
-        @if ((Model.ExternalLogins?.Count ?? 0) > 0)
-        {
-            <section aria-labelledby="external-login-title">
-                <h2 id="external-login-title" class="h6 text-center text-muted mt-3 mb-2">
-                    O inicia sesión con
-                </h2>
-                <form id="external-account" asp-page="./ExternalLogin"
-                      asp-route-returnUrl="@Model.ReturnUrl" method="post">
-                    <div class="d-flex gap-2 justify-content-center">
-                        @foreach (var provider in Model.ExternalLogins!)
-                        {
-                            <button type="submit" class="btn btn-outline-secondary btn-sm"
-                                    name="provider" value="@provider.Name"
-                                    title="Iniciar sesión con @provider.DisplayName">
-                                @provider.DisplayName
-                            </button>
-                        }
-                    </div>
-                </form>
-            </section>
-        }
 
     </div>
 </div>

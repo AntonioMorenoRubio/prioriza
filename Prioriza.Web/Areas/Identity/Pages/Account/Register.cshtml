@@ -70,14 +70,16 @@
                         {
                             <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl"
                                   method="post" class="form-horizontal">
-                                <div>
-                                    <p>
-                                        @foreach (var provider in Model.ExternalLogins!)
-                                        {
-                                            <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name"
-                                                    title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                                        }
-                                    </p>
+                                <div class="d-flex flex-column gap-2 mt-3">
+                                    @foreach (var provider in Model.ExternalLogins!)
+                                    {
+                                        <button type="submit" class="btn btn-dark border-light-subtle d-flex align-items-center justify-content-center gap-2 w-100"
+                                                name="provider" value="@provider.Name"
+                                                title="Iniciar sesión con @provider.DisplayName">
+                                            <i class="bi bi-@(provider.Name.ToLower())" aria-hidden="true"></i>
+                                            <span class="text-white">Continuar con @provider.DisplayName</span>
+                                        </button>
+                                    }
                                 </div>
                             </form>
                         }
