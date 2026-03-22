@@ -5,6 +5,13 @@
     var pendientes = Model.Where(t => !t.IsCompleted).ToList();
 }
 
+<div class="d-flex justify-content-end mb-3">
+    <button class="btn btn-primary btn-sm"
+            data-bs-toggle="modal" data-bs-target="#modalCrearTarea">
+        + Nueva tarea
+    </button>
+</div>
+
 <div class="row g-3">
     <!-- Cuadrante 1: Importante + Urgente -->
     <div class="col-md-6">
