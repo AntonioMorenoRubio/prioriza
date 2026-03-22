@@ -94,20 +94,6 @@ public class ProjectsController : Controller
     }
 
     /// <summary>
-    /// GET /Projects/Edit/5
-    /// Muestra el formulario de edición de un proyecto existente.
-    /// Devuelve 404 si el proyecto no existe o pertenece a otro usuario.
-    /// </summary>
-    public async Task<IActionResult> Edit(int id)
-    {
-        var project = await GetOwnedProjectAsync(id);
-        if (project is null)
-            return NotFound();
-
-        return View(project);
-    }
-
-    /// <summary>
     /// POST /Projects/Edit/5
     /// Actualiza los datos de un proyecto existente.
     /// UserId e IsInbox se preservan del registro original para evitar

@@ -147,29 +147,6 @@ public class ProjectsControllerTests
     // ── Edit ─────────────────────────────────────────────────────────────────
 
     [Fact]
-    public async Task Edit_Get_ReturnsView_WhenOwner()
-    {
-        var project = new Project { Id = 1, Name = "Test", UserId = "user-1" };
-        _daoMock.Setup(d => d.GetByIdAsync(1)).ReturnsAsync(project);
-
-        var result = await BuildController().Edit(1);
-
-        var view = Assert.IsType<ViewResult>(result);
-        Assert.Equal(project, view.Model);
-    }
-
-    [Fact]
-    public async Task Edit_Get_ReturnsNotFound_WhenNotOwner()
-    {
-        var project = new Project { Id = 1, Name = "Ajeno", UserId = "user-2" };
-        _daoMock.Setup(d => d.GetByIdAsync(1)).ReturnsAsync(project);
-
-        var result = await BuildController().Edit(1);
-
-        Assert.IsType<NotFoundResult>(result);
-    }
-
-    [Fact]
     public async Task Edit_Post_RedirectsToDetails_WhenValid()
     {
         var existing = new Project { Id = 1, Name = "Original", UserId = "user-1" };
