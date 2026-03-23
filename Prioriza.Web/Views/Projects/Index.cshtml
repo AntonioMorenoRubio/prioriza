@@ -83,101 +83,10 @@ else
     </div>
 }
 
-<!-- Modal: Crear proyecto -->
-<div class="modal fade" id="modalCrearProyecto" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form asp-controller="Projects" asp-action="Create" method="post">
-                @Html.AntiForgeryToken()
-                <div class="modal-header">
-                    <h2 class="modal-title h5" id="modalCrearProyectoLabel">Nuevo proyecto</h2>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                            aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="proyectoNombre" class="form-label">
-                            Nombre <span class="text-danger" aria-hidden="true">*</span>
-                            <span class="visually-hidden">(obligatorio)</span>
-                        </label>
-                        <input id="proyectoNombre" name="Name" class="form-control"
-                               required maxlength="100" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="proyectoDescripcion" class="form-label">Descripción</label>
-                        <textarea id="proyectoDescripcion" name="Description"
-                                  class="form-control" rows="3" maxlength="200"></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary"
-                            data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Crear proyecto</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+<partial name="~/Views/Projects/_ModalCreateProject.cshtml" />
 
 <!-- Modal: Crear tarea rápida hacia Inbox -->
-<div class="modal fade" id="modalCrearTarea" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form asp-controller="WorkItems" asp-action="Create"
-                  asp-route-projectId="@ViewBag.InboxId" method="post">
-                @Html.AntiForgeryToken()
-                <div class="modal-header">
-                    <h2 class="modal-title h5" id="modalCrearTareaLabel">Nueva tarea</h2>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                            aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body">
-                    @if (ViewBag.InboxId == null)
-                    {
-                        <div class="alert alert-warning small" role="alert">
-                            No se encontró el Inbox. Regístrate de nuevo o contacta soporte.
-                        </div>
-                    }
-                    <div class="mb-3">
-                        <label for="tareaTitulo" class="form-label">
-                            Título <span class="text-danger" aria-hidden="true">*</span>
-                            <span class="visually-hidden">(obligatorio)</span>
-                        </label>
-                        <input id="tareaTitulo" name="Title" class="form-control"
-                               required maxlength="200" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="tareaDescripcion" class="form-label">Descripción</label>
-                        <textarea id="tareaDescripcion" name="Description"
-                                  class="form-control" rows="3"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="tareaPrioridad" class="form-label">Prioridad</label>
-                        <select id="tareaPrioridad" name="Priority" class="form-select">
-                            <option value="">Sin prioridad</option>
-                            <option value="Baja">Baja</option>
-                            <option value="Media">Media</option>
-                            <option value="Alta">Alta</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="tareaFecha" class="form-label">Fecha límite</label>
-                        <input id="tareaFecha" name="DueDate" type="date"
-                               class="form-control" />
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary"
-                            data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary"
-                            @(ViewBag.InboxId == null ? "disabled" : "")>
-                        Crear tarea
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+<partial name="~/Views/Projects/_ModalCreateWorkItem.cshtml" model="Model.First(project => project.IsInbox)" />
 
 @section Scripts {
     <script>

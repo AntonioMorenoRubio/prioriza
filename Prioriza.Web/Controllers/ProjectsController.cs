@@ -74,12 +74,6 @@ public class ProjectsController : Controller
     }
 
     /// <summary>
-    /// GET /Projects/Create
-    /// Muestra el formulario de creación de un nuevo proyecto.
-    /// </summary>
-    public IActionResult Create() => View();
-
-    /// <summary>
     /// POST /Projects/Create
     /// Persiste un nuevo proyecto asignándolo al usuario autenticado.
     /// IsInbox se fuerza a false para que nunca se cree un segundo Inbox por accidente.
@@ -89,28 +83,16 @@ public class ProjectsController : Controller
     {
         ModelState.Remove(nameof(Project.UserId));
         ModelState.Remove(nameof(Project.User));
+        ModelState.Remove(nameof(Project.Description));
         
         if (!ModelState.IsValid)
-            return View(project);
+            return RedirectToAction(nameof(Index));
 
         project.UserId = _userManager.GetUserId(User)!;
         project.IsInbox = false;
+        project.Description ??= string.Empty;
         await _projectDao.CreateAsync(project);
         return RedirectToAction(nameof(Index));
-    }
-
-    /// <summary>
-    /// GET /Projects/Edit/5
-    /// Muestra el formulario de edición de un proyecto existente.
-    /// Devuelve 404 si el proyecto no existe o pertenece a otro usuario.
-    /// </summary>
-    public async Task<IActionResult> Edit(int id)
-    {
-        var project = await GetOwnedProjectAsync(id);
-        if (project is null)
-            return NotFound();
-
-        return View(project);
     }
 
     /// <summary>
@@ -139,20 +121,6 @@ public class ProjectsController : Controller
         existing.Description = project.Description;
         await _projectDao.UpdateAsync(existing);
         return RedirectToAction(nameof(Details), new { id });
-    }
-
-    /// <summary>
-    /// GET /Projects/Delete/5
-    /// Muestra la pantalla de confirmación antes de eliminar un proyecto.
-    /// Devuelve 404 si el proyecto no existe o pertenece a otro usuario.
-    /// </summary>
-    public async Task<IActionResult> Delete(int id)
-    {
-        var project = await GetOwnedProjectAsync(id);
-        if (project is null)
-            return NotFound();
-
-        return View(project);
     }
 
     /// <summary>

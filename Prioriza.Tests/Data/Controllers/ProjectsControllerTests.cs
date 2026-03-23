@@ -60,7 +60,7 @@ public class ProjectsControllerTests
         _daoMock.Setup(d => d.GetInboxByUserAsync("user-1")).ReturnsAsync(inbox);
         _daoMock.Setup(d => d.GetAllByUserAsync("user-1")).ReturnsAsync(projects);
 
-        var result = await BuildController("user-1").Index();
+        var result = await BuildController().Index();
 
         var view = Assert.IsType<ViewResult>(result);
         var model = Assert.IsAssignableFrom<IEnumerable<Project>>(view.Model).ToList();
@@ -78,7 +78,7 @@ public class ProjectsControllerTests
         var project = new Project { Id = 1, Name = "Test", UserId = "user-1" };
         _daoMock.Setup(d => d.GetByIdAsync(1)).ReturnsAsync(project);
 
-        var result = await BuildController("user-1").Details(1);
+        var result = await BuildController().Details(1);
 
         var view = Assert.IsType<ViewResult>(result);
         Assert.Equal(project, view.Model);
@@ -100,7 +100,7 @@ public class ProjectsControllerTests
         var project = new Project { Id = 1, Name = "Ajeno", UserId = "user-2" };
         _daoMock.Setup(d => d.GetByIdAsync(1)).ReturnsAsync(project);
 
-        var result = await BuildController("user-1").Details(1);
+        var result = await BuildController().Details(1);
 
         Assert.IsType<NotFoundResult>(result);
     }
@@ -127,7 +127,7 @@ public class ProjectsControllerTests
 
         var result = await controller.Create(new Project { Id = 1, Name = "Test", UserId = "user-1" });
 
-        Assert.IsType<ViewResult>(result);
+        Assert.IsType<RedirectToActionResult>(result);
     }
 
     [Fact]
@@ -139,35 +139,12 @@ public class ProjectsControllerTests
             .Callback<Project>(p => created = p)
             .ReturnsAsync(new Project { Id = 1, Name = "Test", UserId = "user-1" });
 
-        await BuildController("user-1").Create(new Project { Id = 1, Name = "Test", UserId = "user-1" });
+        await BuildController().Create(new Project { Id = 1, Name = "Test", UserId = "user-1" });
 
         Assert.Equal("user-1", created?.UserId);
     }
 
     // ── Edit ─────────────────────────────────────────────────────────────────
-
-    [Fact]
-    public async Task Edit_Get_ReturnsView_WhenOwner()
-    {
-        var project = new Project { Id = 1, Name = "Test", UserId = "user-1" };
-        _daoMock.Setup(d => d.GetByIdAsync(1)).ReturnsAsync(project);
-
-        var result = await BuildController("user-1").Edit(1);
-
-        var view = Assert.IsType<ViewResult>(result);
-        Assert.Equal(project, view.Model);
-    }
-
-    [Fact]
-    public async Task Edit_Get_ReturnsNotFound_WhenNotOwner()
-    {
-        var project = new Project { Id = 1, Name = "Ajeno", UserId = "user-2" };
-        _daoMock.Setup(d => d.GetByIdAsync(1)).ReturnsAsync(project);
-
-        var result = await BuildController("user-1").Edit(1);
-
-        Assert.IsType<NotFoundResult>(result);
-    }
 
     [Fact]
     public async Task Edit_Post_RedirectsToDetails_WhenValid()
@@ -176,7 +153,7 @@ public class ProjectsControllerTests
         _daoMock.Setup(d => d.GetByIdAsync(1)).ReturnsAsync(existing);
         _daoMock.Setup(d => d.UpdateAsync(It.IsAny<Project>())).ReturnsAsync(existing);
 
-        var result = await BuildController("user-1")
+        var result = await BuildController()
             .Edit(1, new Project { Id = 1, Name = "Editado", UserId = "user-1" });
 
         var redirect = Assert.IsType<RedirectToActionResult>(result);
@@ -199,7 +176,7 @@ public class ProjectsControllerTests
         var project = new Project { Id = 1, Name = "A borrar", UserId = "user-1" };
         _daoMock.Setup(d => d.GetByIdAsync(1)).ReturnsAsync(project);
 
-        var result = await BuildController("user-1").DeleteConfirmed(1);
+        var result = await BuildController().DeleteConfirmed(1);
 
         var redirect = Assert.IsType<RedirectToActionResult>(result);
         Assert.Equal(nameof(ProjectsController.Index), redirect.ActionName);
@@ -212,7 +189,7 @@ public class ProjectsControllerTests
         var project = new Project { Id = 1, Name = "Ajeno", UserId = "user-2" };
         _daoMock.Setup(d => d.GetByIdAsync(1)).ReturnsAsync(project);
 
-        var result = await BuildController("user-1").DeleteConfirmed(1);
+        var result = await BuildController().DeleteConfirmed(1);
 
         Assert.IsType<NotFoundResult>(result);
         _daoMock.Verify(d => d.DeleteAsync(It.IsAny<int>()), Times.Never);

@@ -2,11 +2,9 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +17,6 @@ namespace Prioriza.Web.Areas.Identity.Pages.Account.Manage
     public class EmailModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
 
         public EmailModel(
@@ -28,7 +25,6 @@ namespace Prioriza.Web.Areas.Identity.Pages.Account.Manage
             IEmailSender emailSender)
         {
             _userManager = userManager;
-            _signInManager = signInManager;
             _emailSender = emailSender;
         }
 
@@ -123,14 +119,18 @@ namespace Prioriza.Web.Areas.Identity.Pages.Account.Manage
                 var callbackUrl = Url.Page(
                     "/Account/ConfirmEmailChange",
                     pageHandler: null,
-                    values: new { area = "Identity", userId = userId, email = Input.NewEmail, code = code },
+                    values: new { area = "Identity", userId, email = Input.NewEmail, code },
                     protocol: Request.Scheme);
-                await _emailSender.SendEmailAsync(
-                    Input.NewEmail,
-                    "Confirma tu correo",
-                    $"Por favor, confirma tu cuenta haciendo clic <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>aquí.</a>.");
+                if (callbackUrl != null)
+                {
+                    await _emailSender.SendEmailAsync(
+                        Input.NewEmail,
+                        "Confirma tu correo",
+                        $"Por favor, confirma tu cuenta haciendo clic <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>aquí.</a>.");
 
-                StatusMessage = "Correo de confirmación enviado. Por favor, comprueba tu nuevo correo.";
+                    StatusMessage = "Correo de confirmación enviado. Por favor, comprueba tu nuevo correo.";
+                }
+
                 return RedirectToPage();
             }
 
@@ -159,14 +159,22 @@ namespace Prioriza.Web.Areas.Identity.Pages.Account.Manage
             var callbackUrl = Url.Page(
                 "/Account/ConfirmEmail",
                 pageHandler: null,
-                values: new { area = "Identity", userId = userId, code = code },
+                values: new { area = "Identity", userId, code },
                 protocol: Request.Scheme);
-            await _emailSender.SendEmailAsync(
-                email,
-                "Verifica tu correo",
-                $"Por favor, verifica tu cuenta haciendo clic <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>aquí.</a>.");
+            if (email != null && callbackUrl != null)
+            {
+                await _emailSender.SendEmailAsync(
+                    email,
+                    "Verifica tu correo",
+                    $"Por favor, verifica tu cuenta haciendo clic <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>aquí.</a>.");
 
-            StatusMessage = "Correo de verificación enviado. Por favor, comprueba tu nuevo correo.";
+                StatusMessage = "Correo de verificación enviado. Por favor, comprueba tu nuevo correo.";
+            }
+            else
+            {
+                StatusMessage = "El correo de verificación no ha podido ser enviado. Por favor, inténtalo más tarde.";
+            }
+
             return RedirectToPage();
         }
     }

@@ -1,0 +1,27 @@
+﻿@model Prioriza.Web.Data.Entities.Project
+
+<div class="modal fade" id="modalBorrarProyecto" tabindex="-1"
+     aria-labelledby="modalBorrarProyectoLabel" aria-modal="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title h5" id="modalBorrarProyectoLabel">¿Eliminar proyecto?</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                ¿Seguro que quieres eliminar <strong>@Model.Name</strong> y todas sus tareas?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm"
+                        data-bs-dismiss="modal">Cancelar
+                </button>
+                <form asp-controller="Projects" asp-action="Delete"
+                      asp-route-id="@Model.Id" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

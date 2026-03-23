@@ -1,0 +1,116 @@
+﻿@using Prioriza.Web.Data.Entities
+@model List<WorkItem>
+
+@{
+    var pendientes = Model.Where(t => !t.IsCompleted).ToList();
+}
+
+<div class="d-flex justify-content-end mb-3">
+    <button class="btn btn-primary btn-sm"
+            data-bs-toggle="modal" data-bs-target="#modalCrearTarea">
+        + Nueva tarea
+    </button>
+</div>
+
+<div class="row g-3">
+    <!-- Cuadrante 1: Importante + Urgente -->
+    <div class="col-md-6">
+        <div class="card border-danger h-100">
+            <div class="card-header bg-danger text-white fw-bold">
+                🔥 Hazlo ahora
+                <small class="fw-normal ms-1">Importante + Urgente</small>
+            </div>
+            <div class="card-body p-2">
+                @foreach (var task in pendientes.Where(t => t.EisenhowerQuadrant == EisenhowerQuadrant.DoFirst))
+                {
+                    <div class="p-2 mb-1 rounded border workitem-card"
+                         role="button"
+                         tabindex="0"
+                         data-bs-toggle="modal"
+                         data-bs-target="#modalTarea-@task.Id"
+                         aria-label="Abrir tarea: @task.Title"
+                         onkeydown="if(event.key==='Enter'||event.key===' ')this.click()">
+                        @task.Title
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Cuadrante 2: Importante + No urgente -->
+    <div class="col-md-6">
+        <div class="card border-primary h-100">
+            <div class="card-header bg-primary text-white fw-bold">
+                📅 Planifícalo
+                <small class="fw-normal ms-1">Importante + No urgente</small>
+            </div>
+            <div class="card-body p-2">
+                @foreach (var task in pendientes.Where(t => t.EisenhowerQuadrant == EisenhowerQuadrant.Schedule))
+                {
+                    <div class="p-2 mb-1 rounded border workitem-card"
+                         role="button"
+                         tabindex="0"
+                         data-bs-toggle="modal"
+                         data-bs-target="#modalTarea-@task.Id"
+                         aria-label="Abrir tarea: @task.Title"
+                         onkeydown="if(event.key==='Enter'||event.key===' ')this.click()">
+                        @task.Title
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Cuadrante 3: No importante + Urgente -->
+    <div class="col-md-6">
+        <div class="card border-warning h-100">
+            <div class="card-header bg-warning text-dark fw-bold">
+                👥 Delégalo
+                <small class="fw-normal ms-1">No importante + Urgente</small>
+            </div>
+            <div class="card-body p-2">
+                @foreach (var task in pendientes.Where(t => t.EisenhowerQuadrant == EisenhowerQuadrant.Delegate))
+                {
+                    <div class="p-2 mb-1 rounded border workitem-card"
+                         role="button"
+                         tabindex="0"
+                         data-bs-toggle="modal"
+                         data-bs-target="#modalTarea-@task.Id"
+                         aria-label="Abrir tarea: @task.Title"
+                         onkeydown="if(event.key==='Enter'||event.key===' ')this.click()">
+                        @task.Title
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Cuadrante 4: No importante + No urgente -->
+    <div class="col-md-6">
+        <div class="card border-secondary h-100">
+            <div class="card-header bg-secondary text-white fw-bold">
+                🗑️ Elimínalo
+                <small class="fw-normal ms-1">No importante + No urgente</small>
+            </div>
+            <div class="card-body p-2">
+                @foreach (var task in pendientes.Where(t => t.EisenhowerQuadrant == EisenhowerQuadrant.Delete))
+                {
+                    <div class="p-2 mb-1 rounded border workitem-card"
+                         role="button"
+                         tabindex="0"
+                         data-bs-toggle="modal"
+                         data-bs-target="#modalTarea-@task.Id"
+                         aria-label="Abrir tarea: @task.Title"
+                         onkeydown="if(event.key==='Enter'||event.key===' ')this.click()">
+                        @task.Title
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<p class="text-muted small mt-3">
+    Las tareas sin prioridad Alta y sin fecha límite aparecen en "Elimínalo".
+    Asigna prioridad y fecha para clasificarlas correctamente.
+</p>

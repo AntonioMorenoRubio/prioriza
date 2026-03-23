@@ -1,0 +1,164 @@
+﻿@using Prioriza.Web.Data.Entities
+@model Prioriza.Web.Data.Entities.Project
+
+@{
+    var pendientes = Model.Tasks.Where(t => !t.IsCompleted).ToList();
+    var completadas = Model.Tasks.Where(t => t.IsCompleted).ToList();
+}
+
+<!-- Buscador de tareas -->
+<div class="d-flex gap-2 mb-3">
+    <div class="flex-grow-1">
+        <label for="filtroTitulo" class="visually-hidden">Buscar tarea</label>
+        <input type="search" id="filtroTitulo" class="form-control form-control-sm"
+               placeholder="Buscar tarea..."/>
+    </div>
+    <div>
+        <label for="filtroPrioridad" class="visually-hidden">Filtrar por prioridad</label>
+        <select id="filtroPrioridad" class="form-select form-select-sm">
+            <option value="">Toda prioridad</option>
+            <option value="Alta">Alta</option>
+            <option value="Media">Media</option>
+            <option value="Baja">Baja</option>
+            <option value="none">Sin prioridad</option>
+        </select>
+    </div>
+    <div>
+        <label for="filtroEstado" class="visually-hidden">Filtrar por estado</label>
+        <select id="filtroEstado" class="form-select form-select-sm">
+            <option value="">Todo estado</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="completada">Completada</option>
+        </select>
+    </div>
+</div>
+
+<!-- Cabecera de tareas -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h5 mb-0">Tareas</h2>
+    <button class="btn btn-primary btn-sm"
+            data-bs-toggle="modal" data-bs-target="#modalCrearTarea">
+        + Nueva tarea
+    </button>
+</div>
+
+<!-- Sin tareas -->
+@if (!Model.Tasks.Any())
+{
+    <p class="text-muted text-center py-4">
+        No hay tareas en este proyecto todavía.
+    </p>
+}
+else
+{
+    <!-- Tareas pendientes -->
+    @if (pendientes.Any())
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3 mb-4">
+            @foreach (var task in pendientes)
+            {
+                <div class="col task-card"
+                     data-titulo="@task.Title.ToLower()"
+                     data-prioridad="@(task.Priority?.ToString() ?? "none")"
+                     data-estado="pendiente">
+                    <div class="card h-100 shadow-sm workitem-card"
+                         role="button"
+                         tabindex="0"
+                         data-bs-toggle="modal"
+                         data-bs-target="#modalTarea-@task.Id"
+                         aria-label="Abrir tarea: @task.Title"
+                         onkeydown="if(event.key==='Enter'||event.key===' ')this.click()">
+                        <div class="card-body d-flex align-items-center gap-2">
+                            <span class="text-muted fs-5">☐</span>
+                            <span>@task.Title</span>
+                            @if (task.Priority.HasValue)
+                            {
+                                <span class="badge mt-1 @(task.Priority switch
+                                                        {
+                                                            Priority.Alta => "bg-danger",
+                                                            Priority.Media => "bg-warning text-dark",
+                                                            _ => "bg-secondary"
+                                                        })" style="width: fit-content;">
+                                    @task.Priority
+                                </span>
+                            }
+                            @if (task.DueDate.HasValue)
+                            {
+                                var vencida = task.DueDate.Value < DateOnly.FromDateTime(DateTime.Today);
+                                <span class="badge mt-1 @(vencida ? "bg-danger" :
+                                                        task.IsUrgent ? "bg-warning text-dark" :
+                                                        task.IsOneWeekToDueDate ? "bg-info text-dark" :
+                                                        "bg-light text-dark border")"
+                                      style="width: fit-content;">
+                                    @(vencida ? "⚠️ " : "📅 ")@task.DueDate.Value.ToString("dd/MM/yyyy")
+                                </span>
+                            }
+                            <span class="text-muted">@task.Description</span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <!-- Tareas completadas (colapsables) -->
+    @if (completadas.Any())
+    {
+        <div class="mb-3">
+            <button class="btn btn-sm btn-link text-muted p-0 text-decoration-none"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#completadas">
+                ▸ Completadas (@completadas.Count)
+            </button>
+            <div class="collapse mt-2" id="completadas">
+                <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">
+                    @foreach (var task in completadas)
+                    {
+                        <div class="col task-card"
+                             data-titulo="@task.Title.ToLower()"
+                             data-prioridad="@(task.Priority?.ToString() ?? "none")"
+                             data-estado="completada">
+                            <div class="card h-100 shadow-sm workitem-card opacity-75"
+                                 role="button"
+                                 tabindex="0"
+                                 data-bs-toggle="modal"
+                                 data-bs-target="#modalTarea-@task.Id"
+                                 aria-label="Abrir tarea: @task.Title"
+                                 onkeydown="if(event.key==='Enter'||event.key===' ')this.click()">
+                                <div class="card-body d-flex align-items-center gap-2">
+                                    <span class="text-success-emphasis" aria-hidden="true">✓</span>
+                                    <span class="text-decoration-line-through text-muted">
+                                        @task.Title
+                                        @if (task.Priority.HasValue)
+                                        {
+                                            <span class="badge mt-1 @(task.Priority switch
+                                                                    {
+                                                                        Priority.Alta => "bg-danger",
+                                                                        Priority.Media => "bg-warning text-dark",
+                                                                        _ => "bg-secondary"
+                                                                    })" style="width: fit-content;">
+                                                @task.Priority
+                                            </span>
+                                        }
+                                        @if (task.DueDate.HasValue)
+                                        {
+                                            var vencida = task.DueDate.Value < DateOnly.FromDateTime(DateTime.Today);
+                                            <span class="badge mt-1 @(vencida ? "bg-danger" :
+                                                                    task.IsUrgent ? "bg-warning text-dark" :
+                                                                    task.IsOneWeekToDueDate ? "bg-info text-dark" :
+                                                                    "bg-light text-dark border")"
+                                                  style="width: fit-content;">
+                                                @(vencida ? "⚠️ " : "📅 ")@task.DueDate.Value.ToString("dd/MM/yyyy")
+                                            </span>
+                                        }
+                                    </span>
+                                    <span class="text-muted">@task.Description.</span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+}
