@@ -103,13 +103,14 @@ public class WorkItemsController : Controller
         
         ModelState.Remove(nameof(WorkItem.ProjectId));
         ModelState.Remove(nameof(WorkItem.Project));
+        ModelState.Remove(nameof(WorkItem.Description));
 
         if (!ModelState.IsValid)
             return RedirectToAction("Details", "Projects", new { id = projectId });
 
         existing.ProjectId = projectId;
         existing.Title = workItem.Title;
-        existing.Description = workItem.Description;
+        existing.Description = workItem.Description ?? string.Empty;
         existing.Priority = workItem.Priority;
         existing.DueDate = workItem.DueDate;
         await _workItemDao.UpdateAsync(existing);
