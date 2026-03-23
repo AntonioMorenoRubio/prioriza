@@ -1,6 +1,8 @@
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Prioriza.Web.Data;
+using Prioriza.Web.Data.DAOs;
+using Prioriza.Web.Data.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,9 +13,21 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddScoped<IProjectDao, ProjectDao>();
+builder.Services.AddScoped<IWorkItemDao, WorkItemDao>();
+
+builder.Services.AddScoped<IEmailSender, NoOpEmailSender>();
+
+builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddAuthentication()
+    .AddGoogle(googleOptions =>
+    {
+        googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? string.Empty;
+        googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? string.Empty;
+    });
 
 var app = builder.Build();
 
@@ -38,7 +52,7 @@ app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
+    pattern: "{controller=Projects}/{action=Index}/{id?}")
     .WithStaticAssets();
 
 app.MapRazorPages()

@@ -1,51 +1,74 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="es" data-bs-theme="light">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Prioriza.Web</title>
+    <meta charset="utf-8"/>
+    <meta name="description" content="Prioriza — Gestiona tus proyectos y tareas con claridad." />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>@ViewData["Title"] - Prioriza</title>
     <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Prioriza.Web.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/Prioriza.Web.styles.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Prioriza.Web</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                    <partial name="_LoginPartial" />
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+<header>
+    <nav class="navbar navbar-dark bg-dark border-bottom box-shadow mb-3">
+        <div class="container-fluid">
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - Prioriza.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <!-- Izquierda: toggle tema -->
+            <div class="d-flex align-items-center gap-1">
+                <span class="text-warning" aria-hidden="true">☀️</span>
+                <div class="form-check form-switch mb-0">
+                    <input class="form-check-input" type="checkbox" id="themeToggle"
+                           role="switch" style="cursor: pointer;"
+                           aria-label="Cambiar entre tema claro y oscuro" />
+                </div>
+                <span class="text-white" aria-hidden="true">🌙</span>
+            </div>
+
+            <!-- Centro: logo -->
+            <a class="navbar-brand position-absolute start-50 translate-middle-x"
+               asp-area="" asp-controller="Projects" asp-action="Index">
+                Prioriza
+            </a>
+
+            <!-- Derecha: perfil y logout -->
+            <div class="d-flex align-items-center gap-2">
+                <partial name="_LoginPartial"/>
+            </div>
+
         </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+    </nav>
+</header>
+<div class="container">
+    <main role="main" class="pb-3">
+        @RenderBody()
+    </main>
+</div>
+
+<footer class="border-top footer navbar-dark bg-dark">
+    <div class="container-fluid d-flex justify-content-between align-items-center small text-light">
+        <span>&copy; @DateTime.Now.Year - Prioriza</span>
+        <span>Gestiona tu trabajo, un paso a la vez.</span>
+    </div>
+</footer>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+<script>
+    const html = document.documentElement;
+    const toggle = document.getElementById('themeToggle');
+    const saved = localStorage.getItem('theme') ?? 'light';
+    html.setAttribute('data-bs-theme', saved);
+    toggle.checked = saved === 'dark';
+
+    toggle.addEventListener('change', () => {
+        const next = toggle.checked ? 'dark' : 'light';
+        html.setAttribute('data-bs-theme', next);
+        localStorage.setItem('theme', next);
+    });
+</script>
+@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

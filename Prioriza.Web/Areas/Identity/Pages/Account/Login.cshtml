@@ -1,0 +1,92 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Inciar sesión";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-sm-8 col-md-5 col-lg-4">
+
+        <div class="card rounded-4 card-login">
+            <div class="card-body p-4 p-md-5">
+
+                <h1 class="h3 text-center fw-bold mb-1">Bienvenido</h1>
+                <p class="text-center text-muted small mb-4">Inicia sesión para continuar</p>
+
+                <section>
+                    <form id="account" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger small" role="alert"></div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Email" class="form-control rounded-3"
+                                   autocomplete="username" aria-required="true"
+                                   placeholder="tu@email.com" />
+                            <label asp-for="Input.Email" class="form-label">Email</label>
+                            <span asp-validation-for="Input.Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Password" class="form-control rounded-3"
+                                   autocomplete="current-password" aria-required="true"
+                                   placeholder="••••••••" />
+                            <label asp-for="Input.Password" class="form-label">Contraseña</label>
+                            <span asp-validation-for="Input.Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" asp-for="Input.RememberMe" />
+                                <label asp-for="Input.RememberMe" class="form-check-label small">
+                                    Recuérdame
+                                </label>
+                            </div>
+                            <a asp-page="./ForgotPassword" class="small">
+                                ¿Olvidaste tu contraseña?
+                            </a>
+                        </div>
+
+                        <button id="login-submit" type="submit"
+                                class="w-100 btn btn-lg btn-primary rounded-3">
+                            Iniciar sesión
+                        </button>
+                    </form>
+                </section>
+                @if ((Model.ExternalLogins?.Count ?? 0) > 0)
+                {
+                    <section aria-label="Iniciar sesión con proveedor externo">
+                        <form id="external-account" asp-page="./ExternalLogin"
+                              asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                            <div class="d-flex flex-column gap-2 mt-3">
+                                @foreach (var provider in Model.ExternalLogins!)
+                                {
+                                    <button type="submit" class="btn btn-dark border-light-subtle d-flex align-items-center justify-content-center gap-2 w-100"
+                                            name="provider" value="@provider.Name"
+                                            title="Iniciar sesión con @provider.DisplayName">
+                                        <i class="bi bi-@(provider.Name.ToLower())" aria-hidden="true"></i>
+                                        <span class="text-white">Continuar con @provider.DisplayName</span>
+                                    </button>
+                                }
+                            </div>
+                        </form>
+                    </section>
+                }
+            </div>
+        </div>
+
+        <nav class="text-center mt-3" aria-label="Opciones de cuenta">
+            <ul class="list-unstyled small">
+                <li class="mb-1">
+                    <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">
+                        ¿No tienes cuenta? Regístrate
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

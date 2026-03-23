@@ -1,0 +1,87 @@
+﻿@model Prioriza.Web.Data.Entities.WorkItem
+@{
+    var projectId = (int)ViewData["projectId"]!;
+}
+
+<div class="modal fade" id="modalTarea-@Model.Id" tabindex="-1"
+     aria-labelledby="modalTareaLabel-@Model.Id" aria-modal="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title h5" id="modalTareaLabel-@Model.Id">@Model.Title</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-3">
+                    <span class="badge @(Model.IsCompleted ? "bg-success" : "bg-warning text-dark")">
+                        @(Model.IsCompleted ? "Completada" : "Pendiente")
+                    </span>
+                </p>
+                <hr />
+                
+                <!-- Formulario de edición -->
+                <form asp-controller="WorkItems" asp-action="Edit" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="projectId" value="@projectId" />
+                    <input type="hidden" name="Id" value="@Model.Id" />
+                    <div class="mb-3">
+                        <label for="titulo-@Model.Id" class="form-label">Título</label>
+                        <input id="titulo-@Model.Id" name="Title" class="form-control"
+                               value="@Model.Title" required maxlength="200" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="descripcion-@Model.Id" class="form-label">Descripción</label>
+                        <textarea id="descripcion-@Model.Id" name="Description"
+                                  class="form-control" rows="3">@Model.Description</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="priority-@Model.Id" class="form-label">Prioridad</label>
+                        <select id="priority-@Model.Id" name="Priority" class="form-select">
+                            <option value="">Sin prioridad</option>
+                            <option value="Baja">Baja</option>
+                            <option value="Media">Media</option>
+                            <option value="Alta">Alta</option>
+                        </select>
+                    </div>
+                    <script>
+                        document.getElementById('priority-@Model.Id').value = '@(Model.Priority?.ToString() ?? "")';
+                    </script>
+                    <div class="mb-3">
+                        <label for="duedate-@Model.Id" class="form-label">Fecha límite</label>
+                        <input id="duedate-@Model.Id" name="DueDate" type="date"
+                               class="form-control" />
+                    </div>
+                    <script>
+                        @if (Model.DueDate.HasValue)
+                        {
+                            <text>
+                            document.getElementById('duedate-@Model.Id').value = '@Model.DueDate.Value.ToString("yyyy-MM-dd")';
+                            </text>
+                        }
+                    </script>
+                    <button type="submit" class="btn btn-sm btn-primary">
+                        Guardar cambios
+                    </button>
+                </form>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <form asp-controller="WorkItems" asp-action="ToggleCompleted" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <input type="hidden" name="projectId" value="@projectId" />
+                    <button type="submit"
+                            class="btn btn-sm @(Model.IsCompleted ? "btn-outline-secondary" : "btn-success")">
+                        @(Model.IsCompleted ? "Marcar pendiente" : "Marcar completada")
+                    </button>
+                </form>
+                <button class="btn btn-sm btn-outline-danger"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalBorrarTarea-@Model.Id"
+                        data-bs-dismiss="modal">
+                    Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

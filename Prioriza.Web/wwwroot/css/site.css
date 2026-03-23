@@ -29,3 +29,32 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+.project-card:hover,
+.workitem-card:hover {
+  transform: translateY(-2px);
+  transition: transform 0.15s ease;
+  cursor: pointer;
+}
+
+.progress-bar {
+  transition: width 0.4s ease;
+}
+
+:root {
+  --prioriza-accent: var(--bs-orange);
+}
+
+/* Navbar */
+.navbar-brand {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--prioriza-accent) !important;
+  text-align: center;
+}
+
+.navbar {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}

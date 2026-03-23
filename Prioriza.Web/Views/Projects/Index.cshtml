@@ -1,0 +1,101 @@
+﻿@model IEnumerable<Prioriza.Web.Data.Entities.Project>
+
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = "_Layout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Mis proyectos</h1>
+    <div class="d-flex gap-2">
+        <button class="btn btn-secondary"
+                data-bs-toggle="modal" data-bs-target="#modalCrearTarea">
+            + Nueva tarea
+        </button>
+        <button class="btn btn-primary"
+                data-bs-toggle="modal" data-bs-target="#modalCrearProyecto">
+            + Nuevo proyecto
+        </button>
+    </div>
+</div>
+
+<!-- Buscador de proyectos -->
+<div class="mb-4">
+    <label for="filtroProyecto" class="visually-hidden">Buscar proyecto</label>
+    <input type="search" id="filtroProyecto" class="form-control"
+           placeholder="Buscar proyecto..." />
+</div>
+
+@if (!Model.Any())
+{
+    <div class="text-center text-muted py-5">
+        <p class="fs-5">Aún no tienes proyectos.</p>
+        <button class="btn btn-primary"
+                data-bs-toggle="modal" data-bs-target="#modalCrearProyecto">
+            Crear tu primer proyecto
+        </button>
+    </div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+        @foreach (var project in Model)
+        {
+            <div class="col project-item" data-nombre="@project.Name.ToLower()">
+                <a asp-controller="Projects" asp-action="Details" asp-route-id="@project.Id"
+                   class="text-decoration-none">
+                    <div class="card h-100 shadow-sm project-card @(project.IsInbox ? "border-primary" : "")">
+                        <div class="card-body">
+                            <h2 class="card-title h5">
+                                @if (project.IsInbox)
+                                {
+                                    <span class="me-1" aria-hidden="true">📥</span>
+                                }
+                                @project.Name
+                            </h2>
+                            <span class="badge bg-secondary mt-1">
+                                @project.TareasPendientes pendiente@(project.TareasPendientes != 1 ? "s" : "")
+                            </span>
+                            <br/>
+                            @if (!string.IsNullOrEmpty(project.Description))
+                            {
+                                <p class="card-text text-muted small">@project.Description</p>
+                            }
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <div class="d-flex justify-content-between small text-muted mb-1">
+                                <span>Progreso</span>
+                                <span>@project.Progreso%</span>
+                            </div>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar" role="progressbar"
+                                     style="width: @project.Progreso%"
+                                     aria-valuenow="@project.Progreso"
+                                     aria-valuemin="0" aria-valuemax="100"
+                                     aria-label="Progreso: @project.Progreso%">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+}
+
+<partial name="~/Views/Projects/_ModalCreateProject.cshtml" />
+
+<!-- Modal: Crear tarea rápida hacia Inbox -->
+<partial name="~/Views/Projects/_ModalCreateWorkItem.cshtml" model="Model.First(project => project.IsInbox)" />
+
+@section Scripts {
+    <script>
+        document.getElementById('filtroProyecto').addEventListener('input', function () {
+            const texto = this.value.toLowerCase();
+            document.querySelectorAll('.project-item').forEach(item => {
+                item.style.display = !texto || item.dataset.nombre.includes(texto)
+                    ? '' : 'none';
+            });
+        });
+    </script>
+}

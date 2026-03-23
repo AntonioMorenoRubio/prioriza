@@ -1,0 +1,131 @@
+﻿@using Prioriza.Web.Data.Entities
+@model Prioriza.Web.Data.Entities.Project
+
+@{
+    ViewBag.Title = Model.Name;
+    Layout = "_Layout";
+
+    var pendientes = Model.Tasks.Where(t => !t.IsCompleted).ToList();
+}
+
+<!-- Cabecera -->
+<div class="d-flex justify-content-between align-items-start mb-2">
+    <div>
+        <a asp-controller="Projects" asp-action="Index"
+           class="text-muted small text-decoration-none">
+            ← Volver a proyectos
+        </a>
+        <h1 class="h3 mt-1 mb-0">@Model.Name</h1>
+        @if (!string.IsNullOrEmpty(Model.Description))
+        {
+            <p class="text-muted mt-1 mb-0">@Model.Description</p>
+        }
+    </div>
+    @if (!Model.IsInbox)
+    {
+        <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-outline-secondary"
+                    data-bs-toggle="modal" data-bs-target="#modalEditarProyecto">
+                Editar
+            </button>
+            <button class="btn btn-sm btn-outline-danger"
+                    data-bs-toggle="modal" data-bs-target="#modalBorrarProyecto">
+                Eliminar
+            </button>
+        </div>
+    }
+</div>
+
+<!-- Barra de progreso -->
+<div class="my-4">
+    <div class="d-flex justify-content-between small text-muted mb-1">
+        <span>
+            @Model.TareasPendientes
+            tarea@(Model.TareasPendientes != 1 ? "s" : "") pendiente@(Model.TareasPendientes != 1 ? "s" : "")
+        </span>
+        <span>@Model.Progreso%</span>
+    </div>
+    <div class="progress" style="height: 8px;">
+        <div class="progress-bar" role="progressbar"
+             style="width: @Model.Progreso%"
+             aria-valuenow="@Model.Progreso"
+             aria-valuemin="0" aria-valuemax="100"
+             aria-label="Progreso: @Model.Progreso%">
+        </div>
+    </div>
+</div>
+
+<section id="tab-menu">
+<ul class="nav nav-tabs mb-3" id="vistaTab">
+    <li class="nav-item">
+        <button class="nav-link active" data-bs-toggle="tab"
+                data-bs-target="#vistaLista">
+            Lista
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link" data-bs-toggle="tab"
+                data-bs-target="#vistaMatriz">
+            Matriz de Eisenhower
+        </button>
+    </li>
+</ul>
+</section>
+
+<section id="tab-content">
+<div class="tab-content">
+    <div class="tab-pane fade show active" id="vistaLista">
+        <partial name="~/Views/Projects/_TaskList.cshtml" model="Model" />
+    </div>
+    <div class="tab-pane fade" id="vistaMatriz">
+        <partial name="~/Views/Projects/_EisenhowerMatrix.cshtml" model="pendientes" />
+    </div>
+</div>
+</section>
+
+<!-- ── Modal de cada tarea ──────────────────────────────────────────────── -->
+@foreach (var task in Model.Tasks)
+{
+    <partial name="~/Views/Projects/_ModalEditWorkItem.cshtml"
+             model="task"
+             view-data='new ViewDataDictionary(ViewData) { { "projectId", Model.Id } }'/>
+    
+    <partial name="~/Views/Projects/_ModalDeleteWorkItem.cshtml"
+             model="task"
+             view-data='new ViewDataDictionary(ViewData) { { "projectId", Model.Id } }' />
+}
+
+<!-- Modal: Crear tarea -->
+<partial name="_ModalCreateWorkItem.cshtml" model="Model" />
+
+<!-- Modal: Editar proyecto -->
+@if (!Model.IsInbox)
+{
+    <partial name="~/Views/Projects/_ModalEditProject.cshtml" model="Model" />
+    <partial name="~/Views/Projects/_ModalDeleteProject.cshtml" model="Model" />
+}
+
+@section Scripts {
+    <script>
+        const inputs = ['filtroTitulo', 'filtroPrioridad', 'filtroEstado'];
+
+        function aplicarFiltro() {
+            const titulo = document.getElementById('filtroTitulo').value.toLowerCase();
+            const prioridad = document.getElementById('filtroPrioridad').value;
+            const estado = document.getElementById('filtroEstado').value;
+
+            document.querySelectorAll('.task-card').forEach(card => {
+                const coincideTitulo = !titulo || card.dataset.titulo.includes(titulo);
+                const coincidePrioridad = !prioridad || card.dataset.prioridad === prioridad;
+                const coincideEstado = !estado || card.dataset.estado === estado;
+
+                card.style.display = (coincideTitulo && coincidePrioridad && coincideEstado)
+                    ? '' : 'none';
+            });
+        }
+
+        inputs.forEach(id => {
+            document.getElementById(id).addEventListener('input', aplicarFiltro);
+        });
+    </script>
+}
